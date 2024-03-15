@@ -1,0 +1,9 @@
+protobuf==3.20.0
+gym==0.21.0
+torch==1.11
+stable-baselines3[extra]==1.5.0
+problog==2.2.4
+pysdd
+tensorboard==2.7.0
+matplotlib
+scikit-image>=0.19.2
