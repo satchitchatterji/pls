@@ -13,22 +13,22 @@
         "render_mode": "dict",
         "move_ghosts": true,
         "stochasticity": 0.0,
-        "render_or_not": false
+        "render_or_not": true
     },
     "monitor_features": null,
     "policy_params": {
         "log_interval": 1,
         "batch_size": 512,
         "n_epochs": 15,
-        "n_steps": 2048,
-        "learning_rate": 0.0001,
+        "n_steps": 1024,
+        "learning_rate": 0.001,
         "seed": 567,
         "clip_range": 0.1,
         "gamma": 0.99,
-        "total_timesteps": 700000,
+        "total_timesteps": 7000,
         "net_arch_shared": [],
-        "net_arch_pi": [64, 64],
-        "net_arch_vf": [64, 64],
+        "net_arch_pi": [32, 32],
+        "net_arch_vf": [32, 32],
         "alpha": 0
     },
     "policy_safety_params": {
