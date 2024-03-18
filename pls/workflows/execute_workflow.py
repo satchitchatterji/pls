@@ -22,6 +22,7 @@ from env_specific_classes.pacman.util import get_ground_wall
 from functools import partial
 from pls.algorithms.ppo_shielded import PPO_shielded
 
+import wandb
 
 def get_env_classes(env_name, ghost_distance=1):
     """
@@ -134,6 +135,14 @@ def train(config_file):
         observation_net_cls,
     ) = get_env_classes(config["env"], ghost_distance)
 
+    run = wandb.init(
+        project=f"{config['env']}_trial_wandb_integration",
+        config=config,
+        sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
+        # monitor_gym=True,  # auto-upload the videos of agents playing the game
+        # save_code=True,  # optional
+    )
+
     if "ppo" == config["base_policy"]:
         learn_ppo(
             config_folder,
@@ -143,7 +152,7 @@ def train(config_file):
             custom_callback_cls,
             monitor_cls,
             features_extractor_cls,
-            observation_net_cls,
+            observation_net_cls
         )
 
 

@@ -36,5 +36,6 @@
     "shield_params": null,
     "observation_params": {
         "observation_type": "ground truth"
-    }
+    },
+    "monitor_wandb": true
 }

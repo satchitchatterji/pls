@@ -7,6 +7,8 @@ import os
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.callbacks import CheckpointCallback, BaseCallback
 
+from wandb.integration.sb3 import WandbCallback
+
 # register the custom environments
 import carracing_gym
 import pacman_gym
@@ -19,7 +21,7 @@ def main(
     custom_callback_cls,
     monitor_cls,
     features_extractor_cls,
-    observation_net_cls,
+    observation_net_cls
 ):
     """
     Executing PLPG
@@ -87,9 +89,7 @@ def main(
     model = model_cls(
         env=env,
         learning_rate=config["policy_params"]["learning_rate"],
-        n_steps=config["policy_params"][
-            "n_steps"
-        ],  # number of steps to run for each environment per update
+        n_steps=config["policy_params"]["n_steps"],  # number of steps to run for each environment per update
         batch_size=config["policy_params"]["batch_size"],
         n_epochs=config["policy_params"]["n_epochs"],
         gamma=config["policy_params"]["gamma"],
@@ -119,10 +119,14 @@ def main(
     checkpoint_callback = CheckpointCallback(
         save_freq=5e4, save_path=intermediate_model_path
     )
+    
+    wandb_callback = EmptyCallback()
+    if config["monitor_wandb"]:
+        wandb_callback = WandbCallback()
 
     model.learn(
         total_timesteps=config["policy_params"]["total_timesteps"],
-        callback=[custom_callback, checkpoint_callback, progress_callback]
+        callback=[custom_callback, checkpoint_callback, progress_callback, wandb_callback]
     )
     print(env.get_episode_rewards())
     # save the train policy
@@ -146,3 +150,16 @@ class ProgressBarCallback(BaseCallback):
 
     def _on_training_end(self):
         self.pbar.close()
+
+class EmptyCallback(BaseCallback):
+    def __init__(self):
+        super(EmptyCallback, self).__init__()
+
+    def _on_training_start(self):
+        pass
+
+    def _on_step(self):
+        return True  # returns True to continue training
+    
+    def _on_training_end(self):
+        pass
