@@ -5,12 +5,11 @@ from torch import nn
 import os
 
 from stable_baselines3.common.logger import configure
-from stable_baselines3.common.callbacks import CheckpointCallback
+from stable_baselines3.common.callbacks import CheckpointCallback, BaseCallback
 
 # register the custom environments
 import carracing_gym
 import pacman_gym
-
 
 def main(
     config_folder,
@@ -83,7 +82,7 @@ def main(
         shield_params.update(observation_params)
 
     custom_callback = custom_callback_cls(policy_safety_params=policy_safety_params)
-
+    progress_callback = ProgressBarCallback(config["policy_params"]["total_timesteps"])
     # initialize the rl algorithm
     model = model_cls(
         env=env,
@@ -123,8 +122,27 @@ def main(
 
     model.learn(
         total_timesteps=config["policy_params"]["total_timesteps"],
-        callback=[custom_callback, checkpoint_callback],
+        callback=[custom_callback, checkpoint_callback, progress_callback]
     )
-
+    print(env.get_episode_rewards())
     # save the train policy
     model.save(os.path.join(config_folder, "model"))
+
+
+from tqdm import tqdm
+
+class ProgressBarCallback(BaseCallback):
+    def __init__(self, total_timesteps):  # total_timesteps is total number of steps
+        super(ProgressBarCallback, self).__init__()
+        self.pbar = None
+        self.total_timesteps = total_timesteps
+
+    def _on_training_start(self):
+        self.pbar = tqdm(total=self.total_timesteps)
+
+    def _on_step(self):
+        self.pbar.update(1)
+        return True  # returns True to continue training
+
+    def _on_training_end(self):
+        self.pbar.close()
