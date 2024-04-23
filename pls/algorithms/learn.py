@@ -14,14 +14,14 @@ import carracing_gym
 import pacman_gym
 
 def main(
-    config_folder,
-    config,
-    model_cls,
-    get_sensor_value_ground_truth,
-    custom_callback_cls,
-    monitor_cls,
-    features_extractor_cls,
-    observation_net_cls
+    config_folder,                           # path to the config file
+    config,                                  # a dict containing the configuration
+    model_cls,                               # PPO_shielded
+    get_sensor_value_ground_truth,           # get_ground_wall or get_ground_truth_of_grass
+    custom_callback_cls,                     # Pacman_Callback or Carracing_Callback
+    monitor_cls,                             # Pacman_Monitor or Carracing_Monitor
+    features_extractor_cls,                  # Pacman_FeaturesExtractor or Carracing_FeaturesExtractor
+    observation_net_cls                      # Pacman_Observation_Net or Carracing_Observation_Net
 ):
     """
     Executing PLPG
@@ -30,11 +30,11 @@ def main(
     :param config: a dict containing the configuration
     :param model_cls: rl algorithm
     :param get_sensor_value_ground_truth: function used to compute ground truth observations from image input
-    :param custom_callback_cls:
-    :param monitor_cls:
-    :param features_extractor_cls:
-    :param observation_net_cls:
-    :return:
+    :param custom_callback_cls: callback class
+    :param monitor_cls: monitor class
+    :param features_extractor_cls:  features extractor class
+    :param observation_net_cls:     observation net class
+    :return:    
     """
 
     net_arch = config["policy_params"]["net_arch_shared"] + [
@@ -42,7 +42,7 @@ def main(
             pi=config["policy_params"]["net_arch_pi"],
             vf=config["policy_params"]["net_arch_vf"],
         )
-    ]
+    ] 
 
     observation_params = config["observation_params"]
     shield_params = config["shield_params"]
@@ -54,7 +54,7 @@ def main(
 
     policy_safety_params["observation_net_cls"] = observation_net_cls
 
-    policy_safety_params.update(observation_params)
+    policy_safety_params.update(observation_params) # this is a dictionary
 
 
 

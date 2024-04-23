@@ -55,14 +55,14 @@ def get_env_classes(env_name, ghost_distance=1):
             "observation_net_cls": Carracing_Observation_Net,
         },
     }
-    env_classes = classes[env_name]
+    env_classes = classes[env_name]                     
     return (
-        env_classes["model_cls"],
-        env_classes["get_sensor_value_ground_truth"],
-        env_classes["custom_callback_class"],
-        env_classes["monitor_cls"],
-        env_classes["features_extractor_cls"],
-        env_classes["observation_net_cls"],
+        env_classes["model_cls"],                       # currently only PPO_shielded
+        env_classes["get_sensor_value_ground_truth"],   # get_ground_wall or get_ground_truth_of_grass
+        env_classes["custom_callback_class"],           # Pacman_Callback or Carracing_Callback
+        env_classes["monitor_cls"],                     # Pacman_Monitor or Carracing_Monitor
+        env_classes["features_extractor_cls"],          # Pacman_FeaturesExtractor or Carracing_FeaturesExtractor
+        env_classes["observation_net_cls"],             # Pacman_Observation_Net or Carracing_Observation_Net
     )
 
 
@@ -75,6 +75,7 @@ def evaluate(config_file, model_at_step, n_test_episodes):
         ghost_distance = config["policy_safety_params"]["ghost_distance"]
     else:
         ghost_distance = None
+
     (_, _, _, monitor_cls, _, _) = get_env_classes(config["env"], ghost_distance)
 
     if "ppo" == config["base_policy"]:
@@ -117,6 +118,7 @@ def test(config_file):
 
 
 def train(config_file):
+    # Load the config file
     config_folder = os.path.dirname(config_file)
     with open(config_file) as json_data_file:
         config = json.load(json_data_file)
@@ -126,13 +128,14 @@ def train(config_file):
     else:
         ghost_distance = None
 
+    # Get the classes for the environment
     (
-        model_cls,
-        get_sensor_value_ground_truth,
-        custom_callback_cls,
-        monitor_cls,
-        features_extractor_cls,
-        observation_net_cls,
+        model_cls,                          # PPO_shielded
+        get_sensor_value_ground_truth,      # get_ground_wall or get_ground_truth_of_grass
+        custom_callback_cls,                # Pacman_Callback or Carracing_Callback
+        monitor_cls,                        # Pacman_Monitor or Carracing_Monitor
+        features_extractor_cls,             # Pacman_FeaturesExtractor or Carracing_FeaturesExtractor
+        observation_net_cls,                # Pacman_Observation_Net or Carracing_Observation_Net
     ) = get_env_classes(config["env"], ghost_distance)
 
     run = wandb.init(
@@ -145,14 +148,14 @@ def train(config_file):
 
     if "ppo" == config["base_policy"]:
         learn_ppo(
-            config_folder,
-            config,
-            model_cls,
-            get_sensor_value_ground_truth,
-            custom_callback_cls,
-            monitor_cls,
-            features_extractor_cls,
-            observation_net_cls
+            config_folder,                       # path to the config file
+            config,                              # config dictionary
+            model_cls,                           # PPO_shielded
+            get_sensor_value_ground_truth,       # get_ground_wall or get_ground_truth_of_grass
+            custom_callback_cls,                 # Pacman_Callback or Carracing_Callback
+            monitor_cls,                         # Pacman_Monitor or Carracing_Monitor
+            features_extractor_cls,              # Pacman_FeaturesExtractor or Carracing_FeaturesExtractor
+            observation_net_cls                  # Pacman_Observation_Net or Carracing_Observation_Net
         )
 
 

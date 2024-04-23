@@ -1,4 +1,8 @@
 Metadata-Version: 2.1
-Name: carracing-gym
+Name: carracing_gym
 Version: 0.0.1
 License-File: LICENSE
+Requires-Dist: gym==0.21.0
+Requires-Dist: pyglet==1.5.11
+Requires-Dist: gym[box2d]
+Requires-Dist: pyvirtualdisplay

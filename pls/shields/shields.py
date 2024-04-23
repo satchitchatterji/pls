@@ -36,7 +36,7 @@ class Shield:
         observation_net=None,
         differentiable=True,
         observation_net_cls=None,
-        vsrl_eps=0,
+        vsrl_eps=0, # TODO: CUDA compatibility
         **kwargs,
     ):
         if config_folder is None:
@@ -164,7 +164,9 @@ class Shield:
         action_safeties = self.get_action_safeties(sensor_values)
         actions = action_safeties * base_actions / policy_safety
 
-        assert actions.max() <= 1.00001, f"{actions} violates MAX"
+        actions = th.clamp(actions, 0, 1)
+        # print(action_safeties, policy_safety)
+        assert actions.max() <= 1.00001, f"{actions}, {actions.max()} violates MAX\n{action_safeties}\n{base_actions}\n{sensor_values}\n{policy_safety}"
         assert actions.min() >= -0.00001, f"{actions} violates MIN"
 
         return actions
