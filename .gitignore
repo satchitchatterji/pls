@@ -10,3 +10,4 @@ log*
 *.lock
 wandb/*
 *wandb*
+pls.egg-info/PKG-INFO
