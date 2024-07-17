@@ -1,11 +1,13 @@
 Metadata-Version: 2.1
 Name: pls
 Version: 0.0.1
-Summary: UNKNOWN
-Home-page: UNKNOWN
-License: UNKNOWN
-Platform: UNKNOWN
 License-File: LICENSE
-
-UNKNOWN
-
+Requires-Dist: protobuf
+Requires-Dist: gym
+Requires-Dist: torch
+Requires-Dist: stable-baselines3[extra]
+Requires-Dist: problog
+Requires-Dist: pysdd
+Requires-Dist: tensorboard
+Requires-Dist: matplotlib
+Requires-Dist: scikit-image

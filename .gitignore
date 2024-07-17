@@ -10,4 +10,3 @@ log*
 *.lock
 wandb/*
 *wandb*
-pls.egg-info/*
