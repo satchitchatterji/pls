@@ -47,6 +47,9 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         if shield_params is None:
             # no shielding: does not add any shield to the base policy
             self.shield = None
+        # elif type(shield_params) == Shield:
+        #     # shield is already created
+        #     self.shield = shield_params
         else:
             self.shield = Shield(
                 config_folder=config_folder,
@@ -78,7 +81,7 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         # Evaluate the values for the given image input
         values = self.value_net(latent_vf)
         distribution = self._get_action_dist_from_latent(latent_pi)
-        base_actions = distribution.distribution.probs
+        base_actions = distribution.get_actions(deterministic=deterministic)
 
         # get the ground truth observation
         if self.shield is None:
@@ -154,7 +157,7 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         distribution = self._get_action_dist_from_latent(latent_pi)
 
 
-        base_actions = distribution.distribution.probs
+        base_actions = distribution.get_actions(deterministic=False)
 
         if self.shield is None or not self.shield.differentiable:
             sensor_values = self.get_sensor_value_ground_truth(input=x)
@@ -291,12 +294,17 @@ class PPO_shielded(PPO):
                 entropy_losses.append(entropy_loss.item())
 
                 ####### Safety loss ###########################################
-                policy_safeties = self.policy_safety_calculater.get_policy_safety(
-                    self.policy.info["sensor_value"], self.policy.info["base_policy"]
-                )
-                policy_safeties = policy_safeties.flatten()
-                safety_loss = -th.log(policy_safeties)
-                safety_loss = th.mean(safety_loss)
+                if vars(self.policy_safety_calculater) == {}:
+                    # no shield
+                    safety_loss = th.Tensor([0])
+                else:
+                    policy_safeties = self.policy_safety_calculater.get_policy_safety(
+                        self.policy.info["sensor_value"], self.policy.info["base_policy"]
+                    )
+                    policy_safeties = policy_safeties.flatten()
+                    safety_loss = -th.log(policy_safeties)
+                    safety_loss = th.mean(safety_loss)
+
                 safety_losses.append(safety_loss.item())
 
                 loss = (
@@ -360,3 +368,5 @@ class PPO_shielded(PPO):
         self.logger.record("train/clip_range", clip_range)
         if self.clip_range_vf is not None:
             self.logger.record("train/clip_range_vf", clip_range_vf)
+
+

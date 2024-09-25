@@ -43,7 +43,7 @@ def main(config_folder, config, model_at_step, n_test_episodes, monitor_cls):
         env=env,
         n_eval_episodes=n_test_episodes,
         deterministic=False,
-        return_episode_rewards=False,
+        return_episode_rewards=True,
         render=True,
     )
 

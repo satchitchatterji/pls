@@ -8,3 +8,5 @@ event*
 log*
 *.svg
 *.lock
+wandb/*
+*wandb*
