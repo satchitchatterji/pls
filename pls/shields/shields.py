@@ -25,6 +25,7 @@ class Shield:
 
     def __init__(
         self,
+        program_str=None,
         config_folder=None,
         get_sensor_value_ground_truth=None,
         net_input_dim=None,
@@ -39,31 +40,21 @@ class Shield:
         vsrl_eps=0, # TODO: CUDA compatibility
         **kwargs,
     ):
-        if config_folder is None:
-            # used only when loading an existing policy
-            return
+        if config_folder is not None and shield_program is not None:
+            with open(path.join(config_folder, shield_program)) as f:
+                program = f.read()
+        elif program_str is not None:
+            program = program_str
+        else:
+            raise ValueError("Either config_folder and shield_program or program_str must be provided.")
 
         self.num_sensors = num_sensors
         self.num_actions = num_actions
         self.differentiable = differentiable
         self.observation_type = observation_type
-        with open(path.join(config_folder, shield_program)) as f:
-            program = f.read()
 
-        debug_query_struct = {"safe_next": 0}
-        debug_input_struct = {
-            "sensor_value": [i for i in range(self.num_sensors)],
-            "action": [
-                i for i in range(self.num_sensors, self.num_sensors + self.num_actions)
-            ],
-        }
-
-        self.shield_layer = self.get_layer(
-            program=program,
-            evidences=[],
-            input_struct=debug_input_struct,
-            query_struct=debug_query_struct,
-        )
+        self.program = program
+        self.update_shield(program)
 
         # get sensor values from the pretrained observation network
         if self.observation_type == "pretrained":
@@ -76,6 +67,7 @@ class Shield:
             ).to(device)
             observation_net_path = path.join(config_folder, observation_net)
             self.observation_model.load_state_dict(th.load(observation_net_path))
+            
         elif self.observation_type == "ground truth":
             self.get_sensor_value_ground_truth = get_sensor_value_ground_truth
 
@@ -109,6 +101,28 @@ class Shield:
         )
 
         return layer
+    
+    def update_shield(self, new_program_str):
+        """
+        Update the shield with a new problog program.
+
+        :param new_program_str: new problog program string
+        """
+        self.program = new_program_str
+        debug_query_struct = {"safe_next": 0}
+        debug_input_struct = {
+            "sensor_value": [i for i in range(self.num_sensors)],
+            "action": [
+                i for i in range(self.num_sensors, self.num_sensors + self.num_actions)
+            ],
+        }
+
+        self.shield_layer = self.get_layer(
+            program=new_program_str,
+            evidences=[],
+            input_struct=debug_input_struct,
+            query_struct=debug_query_struct,
+        )
 
     def get_policy_safety(self, sensor_values, base_actions) -> th.Tensor:
         """
@@ -223,3 +237,5 @@ class Shield:
             with th.no_grad():  # do not update the observation net
                 sensor_values = self.get_sensor_value_ground_truth(x)
         return sensor_values
+
+

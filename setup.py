@@ -12,7 +12,7 @@ setup(
         "protobuf",
         "gym",
         "torch",
-        "stable-baselines3[extra]",
+        # "stable-baselines3[extra]",
         # shielding
         "problog",
         "pysdd",
