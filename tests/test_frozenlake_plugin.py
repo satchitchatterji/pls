@@ -24,3 +24,9 @@ def test_research_registration_and_sensor():
     sensor = build_sensor_model('frozenlake_grid_sensor_v1', grid_size=4)
     out = sensor.predict(0)
     assert out.shape == (1, 4)
+    # state 0 (start): no move leads directly to a hole
+    assert out.tolist()[0] == [0.0, 0.0, 0.0, 0.0]
+
+    # state 6 (row=1,col=2): left->5 hole, right->7 hole
+    out6 = sensor.predict(6)
+    assert out6.tolist()[0] == [1.0, 0.0, 1.0, 0.0]

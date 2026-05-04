@@ -20,18 +20,44 @@ import torch as th
 
 
 class FrozenLakeGridSensor(SensorModel):
-    """Simple state-based sensor wrapper for FrozenLake discrete states.
+    """State-based safety sensor wrapper for FrozenLake discrete states.
 
     Sensor order:
-    0: at_start
-    1: at_goal
-    2: in_top_row
-    3: in_left_col
+    0: left_to_hole
+    1: down_to_hole
+    2: right_to_hole
+    3: up_to_hole
     """
 
     def __init__(self, grid_size: int = 4):
         self.grid_size = int(grid_size)
         self.n_states = self.grid_size * self.grid_size
+        # Default FrozenLake-4x4 layout:
+        # S F F F
+        # F H F H
+        # F F F H
+        # H F F G
+        # Hole states: 5, 7, 11, 12
+        self.holes = {5, 7, 11, 12}
+
+    def _next_state(self, s: th.Tensor, action: int) -> th.Tensor:
+        row = th.div(s, self.grid_size, rounding_mode="floor")
+        col = s % self.grid_size
+        if action == 0:  # left
+            col2 = th.clamp(col - 1, min=0)
+            row2 = row
+        elif action == 1:  # down
+            row2 = th.clamp(row + 1, max=self.grid_size - 1)
+            col2 = col
+        elif action == 2:  # right
+            col2 = th.clamp(col + 1, max=self.grid_size - 1)
+            row2 = row
+        elif action == 3:  # up
+            row2 = th.clamp(row - 1, min=0)
+            col2 = col
+        else:
+            raise ValueError(f"Unknown action: {action}")
+        return row2 * self.grid_size + col2
 
     def predict(self, obs, info=None):
         del info
@@ -40,13 +66,17 @@ class FrozenLakeGridSensor(SensorModel):
         else:
             s = th.as_tensor(np.asarray(obs), dtype=th.long).reshape(-1)
 
-        at_start = (s == 0).float()
-        at_goal = (s == (self.n_states - 1)).float()
-        row = th.div(s, self.grid_size, rounding_mode="floor")
-        col = s % self.grid_size
-        in_top_row = (row == 0).float()
-        in_left_col = (col == 0).float()
-        return th.stack([at_start, at_goal, in_top_row, in_left_col], dim=1)
+        hole_ids = th.as_tensor(sorted(self.holes), dtype=th.long, device=s.device)
+
+        def leads_to_hole(action: int) -> th.Tensor:
+            ns = self._next_state(s, action)
+            return (ns.unsqueeze(1) == hole_ids.unsqueeze(0)).any(dim=1).float()
+
+        left_to_hole = leads_to_hole(0)
+        down_to_hole = leads_to_hole(1)
+        right_to_hole = leads_to_hole(2)
+        up_to_hole = leads_to_hole(3)
+        return th.stack([left_to_hole, down_to_hole, right_to_hole, up_to_hole], dim=1)
 
 
 def build_frozenlake_grid_sensor(**kwargs):
