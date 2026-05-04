@@ -3,5 +3,7 @@ include LICENSE
 recursive-include examples/train_a_policy/data *.pl
 recursive-include examples/train_a_policy/lineworld_rule_based *.json *.py
 recursive-include examples *.ipynb
+recursive-include examples/templates *.json *.md *.py *.pl
+include examples/research_compare.py
 recursive-include tests *.py
 recursive-include docs *.rst *.py *.bat Makefile

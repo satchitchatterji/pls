@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Optional, Type
 
 import gymnasium as gym
@@ -56,23 +57,78 @@ class SimpleMonitorWrapper:
         return env
 
 
+def _resolve_resource_path(config_folder: str, maybe_path: str) -> str:
+    p = Path(maybe_path)
+    if p.is_absolute():
+        return str(p)
+    return str((Path(config_folder) / p).resolve())
+
+
 def _build_sensor_model(config: dict, config_folder: str):
     sensor_cfg = config.get("sensor")
     if not sensor_cfg:
         return None
-    supported_types = {"rule_based", "mlp_pretrained"}
-    sensor_type = sensor_cfg.get("type")
-    if sensor_type not in supported_types:
-        raise ValueError(f"Unsupported sensor.type: {sensor_type}")
+
+    if "name" not in sensor_cfg:
+        raise ValueError("sensor.name is required when sensor block is provided")
 
     params = dict(sensor_cfg.get("params", {}))
     params.update(config.get("env_features", {}))
+
     checkpoint_path = params.get("checkpoint_path")
-    if isinstance(checkpoint_path, str) and not os.path.isabs(checkpoint_path):
-        params["checkpoint_path"] = os.path.normpath(
-            os.path.join(config_folder, checkpoint_path)
-        )
+    if isinstance(checkpoint_path, str):
+        params["checkpoint_path"] = _resolve_resource_path(config_folder, checkpoint_path)
+
     return build_sensor_model(sensor_cfg["name"], **params)
+
+
+def _prepare_shield_params(raw_params: dict, config_folder: str) -> dict:
+    params = dict(raw_params or {})
+    if not params:
+        return {}
+
+    required = ["num_sensors", "num_actions", "shield_program"]
+    missing = [k for k in required if k not in params]
+    if missing:
+        raise ValueError(f"shield params missing required keys: {missing}")
+
+    params["shield_program"] = _resolve_resource_path(config_folder, params["shield_program"])
+    if not os.path.exists(params["shield_program"]):
+        raise FileNotFoundError(f"shield_program not found: {params['shield_program']}")
+
+    return params
+
+
+def _validate_preflight(env, sensor_model, shield_params: dict, policy_safety_params: dict):
+    # Ensure action size is consistent whenever shielding is configured.
+    action_count = getattr(getattr(env, "action_space", None), "n", None)
+
+    for block_name, block in (("shield_params", shield_params), ("policy_safety_params", policy_safety_params)):
+        if block:
+            if action_count is None:
+                raise ValueError(
+                    f"{block_name} provided but env action_space is not discrete. "
+                    "Shielding currently supports discrete action spaces only."
+                )
+            expected_actions = int(block["num_actions"])
+            if action_count != expected_actions:
+                raise ValueError(
+                    f"{block_name}.num_actions={expected_actions} does not match env action space size {action_count}."
+                )
+
+    if sensor_model is not None and shield_params:
+        obs, _ = env.reset()
+        preds = sensor_model.predict(obs)
+        if preds.ndim != 2:
+            raise ValueError(
+                f"sensor_model.predict must return rank-2 tensor [batch, num_sensors], got shape {tuple(preds.shape)}"
+            )
+        out_width = int(preds.shape[1])
+        expected = int(shield_params["num_sensors"])
+        if out_width != expected:
+            raise ValueError(
+                f"sensor output width {out_width} does not match shield_params.num_sensors {expected}"
+            )
 
 
 def main(
@@ -91,15 +147,20 @@ def main(
     algorithm = config.get("algorithm", config.get("base_policy", "ppo")).lower()
 
     if features_extractor_cls is None:
-        net_arch = dict(pi=policy_cfg.get("net_arch_pi", [32, 32]), vf=policy_cfg.get("net_arch_vf", [32, 32]))
+        net_arch = dict(
+            pi=policy_cfg.get("net_arch_pi", [32, 32]),
+            vf=policy_cfg.get("net_arch_vf", [32, 32]),
+        )
     else:
         net_arch = policy_cfg["net_arch_shared"] + [
             dict(pi=policy_cfg["net_arch_pi"], vf=policy_cfg["net_arch_vf"])
         ]
 
     observation_params = dict(config.get("observation_params", {}))
-    shield_params = dict(config.get("shield_params") or {})
-    policy_safety_params = dict(config.get("policy_safety_params") or {})
+    shield_params = _prepare_shield_params(config.get("shield_params") or {}, config_folder)
+    policy_safety_params = _prepare_shield_params(
+        config.get("policy_safety_params") or {}, config_folder
+    )
 
     sensor_model = _build_sensor_model(config, config_folder)
 
@@ -120,6 +181,8 @@ def main(
     env = gym.make(config["env"], **config.get("env_features", {}))
     monitor = monitor_cls or SimpleMonitorWrapper()
     env = monitor(env, allow_early_resets=False, **(config.get("monitor_features") or {}))
+
+    _validate_preflight(env, sensor_model, shield_params, policy_safety_params)
 
     custom_callback = (
         custom_callback_cls(policy_safety_params=policy_safety_params)
@@ -172,7 +235,9 @@ def main(
     model.set_logger(new_logger)
 
     intermediate_model_path = os.path.join(config_folder, "model_checkpoints")
-    checkpoint_callback = CheckpointCallback(save_freq=int(5e4), save_path=intermediate_model_path)
+    checkpoint_callback = CheckpointCallback(
+        save_freq=int(5e4), save_path=intermediate_model_path
+    )
 
     wandb_callback = EmptyCallback()
     if config.get("monitor_wandb") and WandbCallback is not None:

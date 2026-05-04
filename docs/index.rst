@@ -12,4 +12,6 @@ Import module: ``import pls``
 
    installation
    quickstart
+   tutorial_add_new_environment
+   ablation_cookbook
    api

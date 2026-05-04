@@ -10,6 +10,7 @@ This repo focuses on:
 - Shielded and unshielded policy learning with Stable-Baselines3
 - Easy experimentation on a minimal safety environment (`LineWorldSafety-v0`)
 - A generic non-trainable sensor interface that can later be replaced by trainable models (for example, CNN-based sensors)
+- Config-first experiment workflows so new studies can be added with minimal core code edits
 
 ## What Is Included
 
@@ -119,6 +120,30 @@ and plots:
 - training reward curves
 - unsafe termination rate curves
 
+## Research Templates
+
+Use these to onboard a new study quickly:
+
+- `examples/templates/experiment_config_template.json`
+- `examples/templates/experiment_config_template.md`
+- `examples/templates/env_skeleton.py`
+- `examples/templates/sensor_wrapper_skeleton.py`
+- `examples/templates/shield_program_starter.pl`
+
+## Comparison Matrix Helper
+
+Run reproducible seed sweeps and export CSV:
+
+```bash
+python examples/research_compare.py \
+  --configs examples/train_a_policy/lineworld_rule_based/seed1/config.json \
+            examples/train_a_policy/lineworld_mlp_sensor/seed1/config.json \
+  --seeds 0 1 2 \
+  --timesteps 2000 \
+  --eval-episodes 20 \
+  --out results/comparison.csv
+```
+
 ## Run Tests
 
 ```bash
@@ -168,6 +193,8 @@ make -C docs html
 Open:
 
 - `docs/_build/html/index.html`
+- `docs/_build/html/tutorial_add_new_environment.html`
+- `docs/_build/html/ablation_cookbook.html`
 
 ## Configuration Notes
 
