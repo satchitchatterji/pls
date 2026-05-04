@@ -1,0 +1,50 @@
+{
+  "algorithm": "a2c",
+  "base_policy": "a2c",
+  "env": "FrozenLake-v1",
+  "env_features": {
+    "map_name": "4x4",
+    "is_slippery": true
+  },
+  "eval_env_features": {
+    "map_name": "4x4",
+    "is_slippery": true
+  },
+  "monitor_features": null,
+  "policy_params": {
+    "log_interval": 1,
+    "batch_size": 64,
+    "n_epochs": 4,
+    "n_steps": 64,
+    "learning_rate": 0.0007,
+    "seed": 123,
+    "clip_range": 0.2,
+    "gamma": 0.99,
+    "total_timesteps": 5000,
+    "net_arch_shared": [],
+    "net_arch_pi": [64, 64],
+    "net_arch_vf": [64, 64],
+    "alpha": 0.1
+  },
+  "policy_safety_params": {
+    "num_sensors": 4,
+    "num_actions": 4,
+    "shield_program": "../../data/frozenlake_safe_start.pl"
+  },
+  "shield_params": {
+    "num_sensors": 4,
+    "num_actions": 4,
+    "shield_program": "../../data/frozenlake_safe_start.pl"
+  },
+  "observation_params": {
+    "observation_type": "ground truth"
+  },
+  "sensor": {
+    "type": "rule_based",
+    "name": "frozenlake_grid_sensor_v1",
+    "params": {
+      "grid_size": 4
+    }
+  },
+  "monitor_wandb": false
+}

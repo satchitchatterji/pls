@@ -144,6 +144,22 @@ python examples/research_compare.py \
   --out results/comparison.csv
 ```
 
+## Researcher-Owned FrozenLake Example
+
+This repo includes a plain researcher-owned integration file (no installable plugin
+packaging required) that shows zero `pls/` core edits during experiment setup:
+
+- Registration file: `examples/train_a_policy/frozenlake_plugin/research_registration.py`
+- Env: `FrozenLake-v1` (Gymnasium)
+- Sensor wrapper: `frozenlake_grid_sensor_v1`
+- Runtime registration API: `register_env_runtime(...)`
+
+Run quickstart:
+
+```bash
+python examples/train_a_policy/frozenlake_plugin/quickstart.py
+```
+
 ## Run Tests
 
 ```bash
