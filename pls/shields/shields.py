@@ -1,7 +1,6 @@
 import torch as th
 from pls.shields.deepproblog import DeepProbLogLayer, DeepProbLogLayer_Optimized
 from os import path
-from random import random
 
 
 class Shield:
@@ -13,14 +12,12 @@ class Shield:
     ----------
     num_sensors: Number of sensors.
     num_actions: Number of available discrete actions.
-    differentiable: Boolean indicating whether the shield is differentiable.
     config_folder: location of the config file
     observation_type:Observation type ("ground truth" or "pretrained")
     noisy_observations: Boolean indicating whether noisy observations are used
     shield_layer: deep problog layer as the shield
     observation_model: observation net object
     get_sensor_value_ground_truth: function used to compute ground truth observations from image input
-    vsrl_eps: Probability of shutting down the shield.
     """
 
     def __init__(
@@ -36,9 +33,7 @@ class Shield:
         observation_type=None,
         noisy_observations=False,
         observation_net=None,
-        differentiable=True,
         observation_net_cls=None,
-        vsrl_eps=0, # TODO: CUDA compatibility
         **kwargs,
     ):
         if config_folder is not None and shield_program is not None:
@@ -51,7 +46,8 @@ class Shield:
 
         self.num_sensors = num_sensors
         self.num_actions = num_actions
-        self.differentiable = differentiable
+        # Backward-compatibility: ignore legacy flag if present in kwargs.
+        kwargs.pop("differentiable", None)
         self.observation_type = observation_type
         self.sensor_model = sensor_model
 
@@ -74,9 +70,6 @@ class Shield:
             
         elif self.observation_type == "ground truth":
             self.get_sensor_value_ground_truth = get_sensor_value_ground_truth
-
-        # VSRL has a predefined parameter to randomize actions
-        self.vsrl_eps = vsrl_eps
 
     def get_layer(self, program, evidences, input_struct, query_struct):
         """
@@ -169,14 +162,12 @@ class Shield:
 
     def get_shielded_policy(self, base_actions, sensor_values) -> th.Tensor:
         """
-        Compute the shielded policy. This function is for differentiable shields.
+        Compute the shielded policy.
 
         :param base_actions: tensor of the action probability distribution
         :param sensor_values: tensor of sensor values (observed or ground truth)
         :return: tensor representing the shielded policy
         """
-
-        assert self.differentiable is True
 
         policy_safety = self.get_policy_safety(sensor_values, base_actions)
         action_safeties = self.get_action_safeties(sensor_values)
@@ -188,38 +179,6 @@ class Shield:
         assert actions.min() >= -0.00001, f"{actions} violates MIN"
 
         return actions
-
-    def get_shielded_policy_vsrl(self, base_actions, sensor_values) -> th.Tensor:
-        """
-        Compute the shielded policy. This function is an implementation of vsrl
-        (a non-differentiable shield).
-
-        :param base_actions: tensor of the action probability distribution
-        :param sensor_values: tensor of sensor values (observed or ground truth)
-        :return: tensor representing the shielded policy
-        """
-
-        assert self.differentiable is False
-
-        with th.no_grad():
-            rdn = random()
-            if rdn < self.vsrl_eps:
-                # turn off the shield with the probability of self.vsrl_eps,
-                # i.e. action_safeties contains only ones
-                action_safeties = th.ones((sensor_values.size(0), self.num_actions))
-            else:
-                # turn on the shield
-                action_safeties = self.get_action_safeties(sensor_values)
-                # vsrl requires all actions to be either safe or unsafe
-                action_safeties = (action_safeties > 0.5).float()
-
-            actions = (
-                action_safeties
-                * base_actions
-                / th.sum(base_actions * action_safeties, dim=1, keepdim=True)
-            )
-
-            return actions
 
     def get_sensor_values(self, x: th.Tensor) -> th.Tensor:
         """
@@ -246,4 +205,3 @@ class Shield:
         else:
             raise ValueError(f"Unsupported observation_type: {self.observation_type}")
         return sensor_values
-

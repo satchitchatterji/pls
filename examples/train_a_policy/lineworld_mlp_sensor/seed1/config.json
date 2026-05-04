@@ -1,0 +1,52 @@
+{
+  "algorithm": "a2c",
+  "base_policy": "a2c",
+  "env": "LineWorldSafety-v0",
+  "env_features": {
+    "length": 7,
+    "max_steps": 30
+  },
+  "eval_env_features": {
+    "length": 7,
+    "max_steps": 30
+  },
+  "monitor_features": null,
+  "policy_params": {
+    "log_interval": 1,
+    "batch_size": 64,
+    "n_epochs": 4,
+    "n_steps": 32,
+    "learning_rate": 0.0007,
+    "seed": 567,
+    "clip_range": 0.2,
+    "gamma": 0.99,
+    "total_timesteps": 2000,
+    "net_arch_shared": [],
+    "net_arch_pi": [32, 32],
+    "net_arch_vf": [32, 32],
+    "alpha": 0.2
+  },
+  "policy_safety_params": {
+    "num_sensors": 3,
+    "num_actions": 3,
+    "shield_program": "../../data/lineworld_safety.pl"
+  },
+  "shield_params": {
+    "num_sensors": 3,
+    "num_actions": 3,
+    "shield_program": "../../data/lineworld_safety.pl"
+  },
+  "observation_params": {
+    "observation_type": "ground truth"
+  },
+  "sensor": {
+    "type": "mlp_pretrained",
+    "name": "pretrained_lineworld_mlp_v1",
+    "params": {
+      "checkpoint_path": "../../../pretrain_sensors_lineworld/lineworld_mlp_sensor.pt",
+      "hidden_sizes": [32, 32],
+      "include_center": true
+    }
+  },
+  "monitor_wandb": false
+}

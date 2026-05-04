@@ -47,7 +47,6 @@ def generate_random_images_pacman2(
             "num_sensors": 4,
             "num_actions": 5,
             "ghost_distance": 2,
-            "differentiable": False,
             "shield_program": "../train_a_policy/data/pacman_ghosts.pl"
         },
         "shield_params": None,

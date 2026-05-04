@@ -22,20 +22,24 @@
     "gamma": 0.99,
     "total_timesteps": 2000,
     "net_arch_shared": [],
-    "net_arch_pi": [32, 32],
-    "net_arch_vf": [32, 32],
+    "net_arch_pi": [
+      32,
+      32
+    ],
+    "net_arch_vf": [
+      32,
+      32
+    ],
     "alpha": 0.2
   },
   "policy_safety_params": {
     "num_sensors": 3,
     "num_actions": 3,
-    "differentiable": true,
     "shield_program": "../../data/lineworld_safety.pl"
   },
   "shield_params": {
     "num_sensors": 3,
     "num_actions": 3,
-    "differentiable": true,
     "shield_program": "../../data/lineworld_safety.pl"
   },
   "observation_params": {

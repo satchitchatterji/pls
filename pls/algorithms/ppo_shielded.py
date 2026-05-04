@@ -101,41 +101,19 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
 
             return (actions, values, log_prob)
 
-        elif self.shield.differentiable:  # PLPG
-            # compute the shielded policy
-            actions = self.shield.get_shielded_policy(base_actions, sensor_values)
-            shielded_policy = Categorical(probs=actions)
+        # compute the shielded policy
+        actions = self.shield.get_shielded_policy(base_actions, sensor_values)
+        shielded_policy = Categorical(probs=actions)
 
-            # get the most probable action of the shielded policy if we want to use a deterministic policy,
-            # otherwuse, sample an action
-            if deterministic:
-                actions = th.argmax(shielded_policy.probs, dim=1)
-            else:
-                actions = shielded_policy.sample()
+        if deterministic:
+            actions = th.argmax(shielded_policy.probs, dim=1)
+        else:
+            actions = shielded_policy.sample()
 
-            log_prob = shielded_policy.log_prob(actions)
-            self.debug_info["shielded_policy"] = shielded_policy.probs
+        log_prob = shielded_policy.log_prob(actions)
+        self.debug_info["shielded_policy"] = shielded_policy.probs
 
-            return (actions, values, log_prob)
-
-        else:  # VSRL
-            with th.no_grad():
-                actions = self.shield.get_shielded_policy_vsrl(
-                    base_actions, sensor_values
-                )
-                shielded_policy = Categorical(probs=actions)
-
-                # get the most probable action of the shielded policy if we want to use a deterministic policy,
-                # otherwuse, sample an action
-                if deterministic:
-                    actions = th.argmax(shielded_policy.probs, dim=1)
-                else:
-                    actions = shielded_policy.sample()
-
-                log_prob = distribution.log_prob(actions)
-                self.debug_info["shielded_policy"] = shielded_policy.probs
-
-                return (actions, values, log_prob)
+        return (actions, values, log_prob)
 
     def evaluate_actions(
         self, x: th.Tensor, actions: th.Tensor
@@ -165,7 +143,7 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         else:
             raise NotImplementedError("Shielded policies currently support only discrete action spaces.")
 
-        if self.shield is None or not self.shield.differentiable:
+        if self.shield is None:
             sensor_values = self.get_sensor_value_ground_truth(input=x)
             log_prob = distribution.log_prob(actions)
 
@@ -173,23 +151,14 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
 
             return (values, log_prob, distribution.entropy())
 
-        elif self.shield.differentiable:  # PLPG
-            sensor_values = self.shield.get_sensor_values(x)
-            # compute the shielded policy
-            shielded_actions = self.shield.get_shielded_policy(base_actions, sensor_values)
-            shielded_policy = Categorical(probs=shielded_actions)
-            log_prob = shielded_policy.log_prob(actions)
+        sensor_values = self.shield.get_sensor_values(x)
+        shielded_actions = self.shield.get_shielded_policy(base_actions, sensor_values)
+        shielded_policy = Categorical(probs=shielded_actions)
+        log_prob = shielded_policy.log_prob(actions)
 
-            self.info = {"sensor_value": sensor_values, "base_policy": base_actions}
+        self.info = {"sensor_value": sensor_values, "base_policy": base_actions}
 
-            return (values, log_prob, shielded_policy.entropy())
-        else:  # VSRL
-            sensor_values = self.shield.get_sensor_values(x)
-            log_prob = distribution.log_prob(actions)
-
-            self.info = {"sensor_value": sensor_values, "base_policy": base_actions}
-
-            return (values, log_prob, distribution.entropy())
+        return (values, log_prob, shielded_policy.entropy())
 
 
 class PPO_shielded(PPO):

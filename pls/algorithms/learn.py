@@ -56,15 +56,22 @@ class SimpleMonitorWrapper:
         return env
 
 
-def _build_sensor_model(config: dict):
+def _build_sensor_model(config: dict, config_folder: str):
     sensor_cfg = config.get("sensor")
     if not sensor_cfg:
         return None
-    if sensor_cfg.get("type") != "rule_based":
-        raise ValueError(f"Unsupported sensor.type: {sensor_cfg.get('type')}")
+    supported_types = {"rule_based", "mlp_pretrained"}
+    sensor_type = sensor_cfg.get("type")
+    if sensor_type not in supported_types:
+        raise ValueError(f"Unsupported sensor.type: {sensor_type}")
 
     params = dict(sensor_cfg.get("params", {}))
     params.update(config.get("env_features", {}))
+    checkpoint_path = params.get("checkpoint_path")
+    if isinstance(checkpoint_path, str) and not os.path.isabs(checkpoint_path):
+        params["checkpoint_path"] = os.path.normpath(
+            os.path.join(config_folder, checkpoint_path)
+        )
     return build_sensor_model(sensor_cfg["name"], **params)
 
 
@@ -94,7 +101,7 @@ def main(
     shield_params = dict(config.get("shield_params") or {})
     policy_safety_params = dict(config.get("policy_safety_params") or {})
 
-    sensor_model = _build_sensor_model(config)
+    sensor_model = _build_sensor_model(config, config_folder)
 
     if shield_params:
         shield_params.update(observation_params)

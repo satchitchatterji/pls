@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clean-pls"
+version = "0.1.0"
+description = "CleanPLS: probabilistic logic shields for Gymnasium RL"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+  { name = "CleanPLS Contributors" }
+]
+keywords = ["reinforcement-learning", "safety", "gymnasium", "problog", "stable-baselines3"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = [
+  "protobuf",
+  "gymnasium",
+  "torch",
+  "stable-baselines3[extra]",
+  "problog",
+  "pysdd",
+  "tensorboard",
+  "matplotlib",
+  "scikit-image"
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest"
+]
+notebook = [
+  "jupyter",
+  "ipykernel",
+  "pandas"
+]
+dev = [
+  "build",
+  "twine",
+  "pytest",
+  "jupyter",
+  "ipykernel",
+  "pandas",
+  "sphinx",
+  "sphinx-rtd-theme"
+]
+docs = [
+  "sphinx",
+  "sphinx-rtd-theme"
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pls*"]
