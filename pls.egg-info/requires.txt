@@ -1,0 +1,10 @@
+protobuf
+gymnasium
+gym
+torch
+stable-baselines3[extra]
+problog
+pysdd
+tensorboard
+matplotlib
+scikit-image

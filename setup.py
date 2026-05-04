@@ -10,9 +10,9 @@ setup(
     install_requires=[
         # environment
         "protobuf",
-        "gym",
+        "gymnasium",
         "torch",
-        # "stable-baselines3[extra]",
+        "stable-baselines3[extra]",
         # shielding
         "problog",
         "pysdd",

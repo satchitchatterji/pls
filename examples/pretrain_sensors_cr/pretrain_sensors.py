@@ -10,7 +10,7 @@ from env_specific_classes.carracing.env_classes import (
     Carracing_Monitor,
 )
 import json
-import gym
+import gymnasium as gym
 import csv
 
 import matplotlib.pyplot as plt

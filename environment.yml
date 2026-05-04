@@ -1,0 +1,22 @@
+name: CleanPLS
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - matplotlib
+  - pytorch
+  - gymnasium
+  - scikit-image
+  - tensorboard
+  - tqdm
+  - pip:
+      - -e .
+      - problog
+      - pysdd
+      - stable-baselines3[extra]
+      - pytest
+      - jupyter
+      - ipykernel

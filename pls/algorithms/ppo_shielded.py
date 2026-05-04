@@ -1,5 +1,6 @@
 from torch.nn import functional as F
-import gym
+import gymnasium as gym
+from gymnasium import spaces
 from typing import Tuple
 from stable_baselines3.common.type_aliases import Schedule
 from stable_baselines3 import PPO
@@ -7,7 +8,6 @@ import numpy as np
 from stable_baselines3.common.utils import explained_variance
 
 from pls.shields.shields import Shield
-from gym import spaces
 import torch as th
 from torch.distributions import Categorical
 from stable_baselines3.common.policies import ActorCriticPolicy
@@ -81,7 +81,10 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         # Evaluate the values for the given image input
         values = self.value_net(latent_vf)
         distribution = self._get_action_dist_from_latent(latent_pi)
-        base_actions = distribution.get_actions(deterministic=deterministic)
+        if isinstance(self.action_space, spaces.Discrete):
+            base_actions = distribution.distribution.probs
+        else:
+            raise NotImplementedError("Shielded policies currently support only discrete action spaces.")
 
         # get the ground truth observation
         if self.shield is None:
@@ -89,7 +92,7 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         else:
             sensor_values = self.shield.get_sensor_values(x)
 
-        self.debug_info = {"sensor_value": sensor_values, "base_policy": base_actions}
+            self.debug_info = {"sensor_value": sensor_values, "base_policy": base_actions}
 
         if self.shield is None:
             actions = distribution.get_actions(deterministic=deterministic)
@@ -157,7 +160,10 @@ class ActorCriticPolicy_shielded(ActorCriticPolicy):
         distribution = self._get_action_dist_from_latent(latent_pi)
 
 
-        base_actions = distribution.get_actions(deterministic=False)
+        if isinstance(self.action_space, spaces.Discrete):
+            base_actions = distribution.distribution.probs
+        else:
+            raise NotImplementedError("Shielded policies currently support only discrete action spaces.")
 
         if self.shield is None or not self.shield.differentiable:
             sensor_values = self.get_sensor_value_ground_truth(input=x)
@@ -368,5 +374,3 @@ class PPO_shielded(PPO):
         self.logger.record("train/clip_range", clip_range)
         if self.clip_range_vf is not None:
             self.logger.record("train/clip_range_vf", clip_range_vf)
-
-

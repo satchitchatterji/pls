@@ -28,6 +28,7 @@ class Shield:
         program_str=None,
         config_folder=None,
         get_sensor_value_ground_truth=None,
+        sensor_model=None,
         net_input_dim=None,
         num_sensors=None,
         num_actions=None,
@@ -52,12 +53,15 @@ class Shield:
         self.num_actions = num_actions
         self.differentiable = differentiable
         self.observation_type = observation_type
+        self.sensor_model = sensor_model
 
         self.program = program
         self.update_shield(program)
 
         # get sensor values from the pretrained observation network
-        if self.observation_type == "pretrained":
+        if self.sensor_model is not None:
+            self.observation_type = "sensor_model"
+        elif self.observation_type == "pretrained":
             self.noisy_observations = noisy_observations
             use_cuda = False
             device = th.device("cuda" if use_cuda else "cpu")
@@ -236,6 +240,10 @@ class Shield:
         elif self.observation_type == "ground truth":
             with th.no_grad():  # do not update the observation net
                 sensor_values = self.get_sensor_value_ground_truth(x)
+        elif self.observation_type == "sensor_model":
+            with th.no_grad():
+                sensor_values = self.sensor_model.predict(x)
+        else:
+            raise ValueError(f"Unsupported observation_type: {self.observation_type}")
         return sensor_values
-
 

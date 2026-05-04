@@ -10,7 +10,7 @@ from env_specific_classes.pacman.env_classes import (
     Pacman_Monitor,
 )
 import json
-import gym
+import gymnasium as gym
 import csv
 import torch as th
 

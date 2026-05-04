@@ -1,11 +1,10 @@
 import os
-import gym
+import gymnasium as gym
 
-from pls.algorithms.ppo_shielded import PPO_shielded
 from stable_baselines3.common.evaluation import evaluate_policy
 
 
-def main(config_folder, config, model_at_step, n_test_episodes, monitor_cls):
+def main(config_folder, config, model_at_step, n_test_episodes, monitor_cls, model_cls):
     """
     Evaluate the given policy by executing it in the given environment.
     Calls stable_baselines3's default evaluate_policy function.
@@ -22,10 +21,11 @@ def main(config_folder, config, model_at_step, n_test_episodes, monitor_cls):
     # initialize the environment for evaluation
     env = gym.make(config["env"], **config["eval_env_features"])
 
-    env = monitor_cls(
-        env,
-        allow_early_resets=False,
-    )
+    if monitor_cls is not None:
+        env = monitor_cls(
+            env,
+            allow_early_resets=False,
+        )
 
     # load the trained policy
     if model_at_step == "end":
@@ -35,7 +35,7 @@ def main(config_folder, config, model_at_step, n_test_episodes, monitor_cls):
             config_folder, "model_checkpoints", f"rl_model_{model_at_step}_steps.zip"
         )
 
-    model = PPO_shielded.load(path, env)
+    model = model_cls.load(path, env)
 
     # calls stable_baselines3's default evaluate_policy function
     mean_reward, std_reward = evaluate_policy(
