@@ -229,6 +229,12 @@ Current workflow supports:
 - Gymnasium environment IDs
 - optional `sensor` block with registry-backed construction
 
+For `algorithm: "dqn"`, optional policy fields include:
+- `"exploration_policy": "epsilon_greedy"` or `"softmax"`
+- `"differentiable_exploration": true|false`
+- `"pltd_mode": "off_policy"` or `"on_policy"`
+- `"softmax_temperature": <float>` (used by softmax and differentiable epsilon-greedy relaxation)
+
 Example sensor block:
 
 ```json

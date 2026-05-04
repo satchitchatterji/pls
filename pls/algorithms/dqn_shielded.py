@@ -27,6 +27,8 @@ class DQN_shielded(DQN):
         policy_safety_params: Optional[Dict[str, Any]] = None,
         differentiable_exploration: bool = False,
         pltd_mode: str = "off_policy",
+        exploration_policy: str = "epsilon_greedy",
+        softmax_temperature: float = 1.0,
         config_folder: Optional[str] = None,
         get_sensor_value_ground_truth=None,
         **kwargs,
@@ -37,6 +39,8 @@ class DQN_shielded(DQN):
         self.policy_safety_params = policy_safety_params or {}
         self.differentiable_exploration = bool(differentiable_exploration)
         self.pltd_mode = pltd_mode
+        self.exploration_policy = exploration_policy
+        self.softmax_temperature = float(max(softmax_temperature, 1e-6))
 
         self._use_safety_loss = self.differentiable_exploration and self.alpha > 0.0
 
@@ -58,27 +62,49 @@ class DQN_shielded(DQN):
                 ps.setdefault("get_sensor_value_ground_truth", get_sensor_value_ground_truth)
             self.policy_safety_calculater = Shield(**ps)
 
+    def _policy_probs_from_q(
+        self,
+        q_values: th.Tensor,
+        deterministic: bool,
+        differentiable: bool,
+        eps: Optional[float] = None,
+    ) -> th.Tensor:
+        n_actions = q_values.shape[1]
+        eps_value = 0.0 if deterministic else (float(self.exploration_rate) if eps is None else float(eps))
+
+        if self.exploration_policy == "softmax":
+            return th.softmax(q_values / self.softmax_temperature, dim=1)
+
+        if self.exploration_policy != "epsilon_greedy":
+            raise ValueError(
+                f"Unsupported exploration_policy='{self.exploration_policy}'. "
+                "Use 'epsilon_greedy' or 'softmax'."
+            )
+
+        if differentiable:
+            greedy_probs = th.softmax(q_values / self.softmax_temperature, dim=1)
+        else:
+            greedy_actions = q_values.argmax(dim=1, keepdim=True)
+            greedy_probs = th.zeros_like(q_values)
+            greedy_probs.scatter_(1, greedy_actions, 1.0)
+
+        uniform = th.full_like(q_values, fill_value=1.0 / n_actions)
+        return (1.0 - eps_value) * greedy_probs + eps_value * uniform
+
     def _compute_base_action_probs(self, obs_tensor: th.Tensor, deterministic: bool) -> th.Tensor:
         with th.no_grad():
             q_values = self.q_net(obs_tensor)
-
-        n_actions = q_values.shape[1]
-        eps = 0.0 if deterministic else float(self.exploration_rate)
-        base_probs = th.full_like(q_values, fill_value=eps / n_actions)
-        greedy_actions = q_values.argmax(dim=1, keepdim=True)
-        base_probs.scatter_add_(
-            dim=1,
-            index=greedy_actions,
-            src=th.full_like(greedy_actions, fill_value=1.0 - eps, dtype=base_probs.dtype),
+        return self._policy_probs_from_q(
+            q_values=q_values, deterministic=deterministic, differentiable=False
         )
-        return base_probs
 
     def _compute_safety_loss(self, observations: th.Tensor, q_values: th.Tensor) -> th.Tensor:
         if not self._use_safety_loss or self.policy_safety_calculater is None:
             return th.tensor(0.0, device=q_values.device)
 
-        # Differentiable policy proxy from Q-values.
-        base_policy = th.softmax(q_values, dim=1)
+        base_policy = self._policy_probs_from_q(
+            q_values=q_values, deterministic=False, differentiable=True
+        )
         sensor_values = self.policy_safety_calculater.get_sensor_values(observations)
         policy_safeties = self.policy_safety_calculater.get_policy_safety(
             sensor_values, base_policy
@@ -129,8 +155,14 @@ class DQN_shielded(DQN):
             with th.no_grad():
                 next_q_values = self.q_net_target(replay_data.next_observations)
                 if self.pltd_mode == "on_policy":
-                    # Approximate SARSA-style next action using current policy.
-                    next_actions = th.argmax(self.q_net(replay_data.next_observations), dim=1, keepdim=True)
+                    # Approximate SARSA-style next action using current exploration policy.
+                    current_next_q = self.q_net(replay_data.next_observations)
+                    next_action_probs = self._policy_probs_from_q(
+                        q_values=current_next_q,
+                        deterministic=False,
+                        differentiable=False,
+                    )
+                    next_actions = th.distributions.Categorical(probs=next_action_probs).sample().reshape(-1, 1)
                     next_q_values = th.gather(next_q_values, dim=1, index=next_actions.long())
                 else:
                     next_q_values, _ = next_q_values.max(dim=1)

@@ -249,6 +249,8 @@ def main(
             shield_params=shield_params or None,
             differentiable_exploration=policy_cfg.get("differentiable_exploration", False),
             pltd_mode=policy_cfg.get("pltd_mode", "off_policy"),
+            exploration_policy=policy_cfg.get("exploration_policy", "epsilon_greedy"),
+            softmax_temperature=policy_cfg.get("softmax_temperature", 1.0),
             config_folder=config_folder,
             get_sensor_value_ground_truth=get_sensor_value_ground_truth,
         )
