@@ -192,12 +192,9 @@ def main(
     progress_callback = ProgressBarCallback(policy_cfg["total_timesteps"])
 
     policy_kwargs = {
-        "shield_params": shield_params or None,
         "net_arch": net_arch,
         "activation_fn": nn.ReLU,
         "optimizer_class": th.optim.Adam,
-        "config_folder": config_folder,
-        "get_sensor_value_ground_truth": get_sensor_value_ground_truth,
     }
     if features_extractor_cls is not None:
         policy_kwargs["features_extractor_class"] = features_extractor_cls
@@ -211,11 +208,18 @@ def main(
         verbose=0,
         seed=policy_cfg["seed"],
         _init_setup_model=True,
-        alpha=policy_cfg.get("alpha", 0),
-        policy_safety_params=policy_safety_params or None,
     )
 
     if algorithm in {"ppo"}:
+        model_common.update(
+            alpha=policy_cfg.get("alpha", 0),
+            policy_safety_params=policy_safety_params or None,
+        )
+        policy_kwargs.update(
+            shield_params=shield_params or None,
+            config_folder=config_folder,
+            get_sensor_value_ground_truth=get_sensor_value_ground_truth,
+        )
         model = model_cls(
             n_steps=policy_cfg["n_steps"],
             batch_size=policy_cfg["batch_size"],
@@ -224,8 +228,48 @@ def main(
             **model_common,
         )
     elif algorithm in {"a2c"}:
+        model_common.update(
+            alpha=policy_cfg.get("alpha", 0),
+            policy_safety_params=policy_safety_params or None,
+        )
+        policy_kwargs.update(
+            shield_params=shield_params or None,
+            config_folder=config_folder,
+            get_sensor_value_ground_truth=get_sensor_value_ground_truth,
+        )
         model = model_cls(
             n_steps=policy_cfg["n_steps"],
+            **model_common,
+        )
+    elif algorithm in {"dqn"}:
+        policy_kwargs["net_arch"] = policy_cfg.get("net_arch_pi", [64, 64])
+        model_common.update(
+            alpha=policy_cfg.get("alpha", 0),
+            policy_safety_params=policy_safety_params or None,
+            shield_params=shield_params or None,
+            differentiable_exploration=policy_cfg.get("differentiable_exploration", False),
+            pltd_mode=policy_cfg.get("pltd_mode", "off_policy"),
+            config_folder=config_folder,
+            get_sensor_value_ground_truth=get_sensor_value_ground_truth,
+        )
+        model = model_cls(
+            buffer_size=policy_cfg.get("buffer_size", int(1e5)),
+            learning_starts=policy_cfg.get("learning_starts", 1000),
+            batch_size=policy_cfg.get("batch_size", 64),
+            train_freq=policy_cfg.get("train_freq", 4),
+            gradient_steps=policy_cfg.get("gradient_steps", 1),
+            target_update_interval=policy_cfg.get("target_update_interval", 1000),
+            **model_common,
+        )
+    elif algorithm in {"dqn_vanilla"}:
+        policy_kwargs["net_arch"] = policy_cfg.get("net_arch_pi", [64, 64])
+        model = model_cls(
+            buffer_size=policy_cfg.get("buffer_size", int(1e5)),
+            learning_starts=policy_cfg.get("learning_starts", 1000),
+            batch_size=policy_cfg.get("batch_size", 64),
+            train_freq=policy_cfg.get("train_freq", 4),
+            gradient_steps=policy_cfg.get("gradient_steps", 1),
+            target_update_interval=policy_cfg.get("target_update_interval", 1000),
             **model_common,
         )
     else:

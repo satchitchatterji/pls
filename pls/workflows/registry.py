@@ -5,6 +5,8 @@ from functools import partial
 from typing import Callable, Dict, Optional, Type
 
 from pls.algorithms.a2c_shielded import A2C_shielded
+from pls.algorithms.dqn import DQN_standard
+from pls.algorithms.dqn_shielded import DQN_shielded
 from pls.algorithms.ppo_shielded import PPO_shielded
 
 
@@ -21,6 +23,8 @@ class RuntimeBundle:
 ALGO_REGISTRY: Dict[str, Type] = {
     "ppo": PPO_shielded,
     "a2c": A2C_shielded,
+    "dqn_vanilla": DQN_standard,
+    "dqn": DQN_shielded,
 }
 
 

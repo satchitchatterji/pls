@@ -18,17 +18,20 @@ This repo focuses on:
 - Shielded algorithms:
   - `PPO_shielded`
   - `A2C_shielded`
+  - `DQN_shielded` (PLTD-capable)
 - Unshielded baselines via SB3:
   - `PPO`
   - `A2C`
+  - `DQN` (via `DQN_standard`)
 - Rule-based sensor model registry:
   - `rule_based_lineworld_v1`
 - Pretrained MLP sensor model registry:
   - `pretrained_lineworld_mlp_v1`
 - ProbLog shield program for LineWorld:
   - `examples/train_a_policy/data/lineworld_safety.pl`
-- Benchmark notebook with reward/safety curves:
+- Benchmark notebooks with reward/safety curves:
   - `examples/lineworld_benchmark_curves.ipynb`
+  - `examples/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb`
 - Basic tests for env/sensor/shield integration:
   - `tests/`
 
@@ -119,6 +122,13 @@ The notebook compares:
 and plots:
 - training reward curves
 - unsafe termination rate curves
+
+FrozenLake comparison notebook additionally includes:
+- DQN
+- Shielded DQN (oracle, off-policy PLTD)
+- Shielded DQN (oracle, on-policy PLTD)
+- Shielded DQN (pretrained MLP, off-policy PLTD)
+- Shielded DQN (pretrained MLP, on-policy PLTD)
 
 ## Research Templates
 
@@ -215,7 +225,7 @@ Open:
 ## Configuration Notes
 
 Current workflow supports:
-- `algorithm: "ppo"` or `"a2c"`
+- `algorithm: "ppo"`, `"a2c"`, `"dqn"`, or `"dqn_vanilla"`
 - Gymnasium environment IDs
 - optional `sensor` block with registry-backed construction
 

@@ -14,6 +14,16 @@ Algorithms
    :undoc-members:
    :show-inheritance:
 
+.. automodule:: pls.algorithms.dqn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pls.algorithms.dqn_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Environments
 ------------
 
