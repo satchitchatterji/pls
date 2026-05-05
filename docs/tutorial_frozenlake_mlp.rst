@@ -1,9 +1,10 @@
 Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)
 ======================================================================
 
-This tutorial uses the fully self-contained script:
+This tutorial uses two fully self-contained scripts:
 
-- ``examples/frozenlake_mlp.py``
+- ``examples/frozenlake/frozenlake_pretrain.py``
+- ``examples/frozenlake/frozenlake_pretrained.py``
 
 Goal
 ----
@@ -14,30 +15,39 @@ without registry/config plumbing.
 Run
 ---
 
+Step 1: pretrain and save a loadable sensor checkpoint:
+
 .. code-block:: bash
 
-   python examples/frozenlake_mlp.py
+   python examples/frozenlake/frozenlake_pretrain.py
+
+Step 2: train SPPO using that saved checkpoint:
+
+.. code-block:: bash
+
+   python examples/frozenlake/frozenlake_pretrained.py
 
 What it does
 ------------
 
-1. Creates ``FrozenLake-v1`` (4x4, slippery).
-2. Generates supervised labels from map geometry:
+1. ``frozenlake_pretrain.py`` creates a supervised dataset from map geometry:
    - for each state and action, label whether the next cell is a hole.
-3. Pretrains an MLP sensor on those labels.
-4. Wraps the pretrained model behind ``predict(obs, info=None)``.
-5. Uses the same in-file ProbLog shield structure as the oracle tutorial.
-6. Trains ``PPO_shielded`` with the pretrained sensor.
-7. Plots and saves:
+2. ``frozenlake_pretrain.py`` trains an MLP sensor and saves ``.pt`` weights.
+3. ``frozenlake_pretrained.py`` loads that checkpoint into a sensor wrapper with
+   ``predict(obs, info=None)``.
+4. ``frozenlake_pretrained.py`` uses an in-file ProbLog shield and trains
+   ``PPO_shielded``.
+5. Plots and saves:
    - MLP pretraining BCE loss,
    - RL reward curve,
-   - RL failure-rate curve.
+   - RL failure-rate proxy curve.
 
-Saved images
-------------
+Saved artifacts
+---------------
 
-- ``examples/images/frozenlake/frozenlake_mlp_curves.png``
-- ``examples/images/frozenlake/frozenlake_mlp_pretrain_only.png`` (fallback path)
+- ``examples/frozenlake/frozenlake_sensor_mlp.pt``
+- ``examples/images/frozenlake/frozenlake_pretrain_loss.png``
+- ``examples/images/frozenlake/frozenlake_pretrained_curves.png``
 
 Why use this tutorial
 ---------------------

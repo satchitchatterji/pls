@@ -8,6 +8,7 @@ Import in Python: `import pls`
 Documentation:
 - Source: `docs/`
 - Built HTML index: `docs/_build/html/index.html`
+- Online-style local entry after build: [docs/_build/html/index.html](docs/_build/html/index.html)
 
 This repo focuses on:
 - Gymnasium-compatible environments
@@ -137,6 +138,8 @@ FrozenLake comparison notebook additionally includes:
 Additional FrozenLake scripts:
 - `examples/frozenlake_oracle.py` (self-contained oracle-sensor SPPO run)
 - `examples/frozenlake_mlp.py` (self-contained pretrained-MLP sensor SPPO run)
+- `examples/frozenlake/frozenlake_pretrain.py` (pretrains and saves a loadable `.pt` sensor)
+- `examples/frozenlake/frozenlake_pretrained.py` (loads `.pt` sensor and trains SPPO)
 - `examples/frozenlake/frozenlake_dqn_sdqn_variant_matrix.ipynb` (DQN/SDQN variant matrix)
 
 ## Research Templates

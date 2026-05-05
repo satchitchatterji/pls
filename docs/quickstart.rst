@@ -30,6 +30,8 @@ FrozenLake self-contained runs (no registry/config required):
 
 - ``python examples/frozenlake_oracle.py``
 - ``python examples/frozenlake_mlp.py``
+- ``python examples/frozenlake/frozenlake_pretrain.py``
+- ``python examples/frozenlake/frozenlake_pretrained.py``
 
 FrozenLake notebook comparisons:
 
