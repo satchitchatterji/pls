@@ -136,8 +136,8 @@ FrozenLake comparison notebook additionally includes:
 - Shielded DQN (pretrained MLP, on-policy PLTD)
 
 Additional FrozenLake scripts:
-- `examples/frozenlake_oracle.py` (self-contained oracle-sensor SPPO run)
-- `examples/frozenlake_mlp.py` (self-contained pretrained-MLP sensor SPPO run)
+- `examples/frozenlake/frozenlake_oracle.py` (self-contained oracle-sensor SPPO run)
+- `examples/frozenlake/frozenlake_mlp.py` (self-contained pretrained-MLP sensor SPPO run)
 - `examples/frozenlake/frozenlake_pretrain.py` (pretrains and saves a loadable `.pt` sensor)
 - `examples/frozenlake/frozenlake_pretrained.py` (loads `.pt` sensor and trains SPPO)
 - `examples/frozenlake/frozenlake_dqn_sdqn_variant_matrix.ipynb` (DQN/SDQN variant matrix)

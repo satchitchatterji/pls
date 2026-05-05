@@ -3,7 +3,7 @@ Tutorial 1: FrozenLake Oracle (No Registry, No Config)
 
 This tutorial uses the fully self-contained script:
 
-- ``examples/frozenlake_oracle.py``
+- ``examples/frozenlake/frozenlake_oracle.py``
 
 Goal
 ----
@@ -26,7 +26,7 @@ Run
 
 .. code-block:: bash
 
-   python examples/frozenlake_oracle.py
+   python examples/frozenlake/frozenlake_oracle.py
 
 What it does
 ------------
