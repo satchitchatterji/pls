@@ -41,12 +41,18 @@ class LineWorldSafetyEnv(gym.Env):
         return self.position == 0 or self.position == self.length - 1
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None):
+        """Reset to the center position and return observation + info."""
         super().reset(seed=seed)
         self.position = self.length // 2
         self.step_count = 0
         return self._obs(), {"position": self.position}
 
     def step(self, action: int) -> Tuple[np.ndarray, float, bool, bool, Dict[str, Any]]:
+        """Apply action and return Gymnasium step tuple.
+
+        Returns:
+            observation, reward, terminated, truncated, info
+        """
         if action not in (0, 1, 2):
             raise ValueError(f"Invalid action: {action}")
 

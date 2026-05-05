@@ -89,7 +89,7 @@ Config used:
 That config uses:
 - `env: LineWorldSafety-v0`
 - `sensor: rule_based_lineworld_v1`
-- shield enabled with `lineworld_safety.pl`
+- shield enabled with `examples/train_a_policy/data/lineworld_safety.pl`
 
 ## Pretrain an MLP Sensor (LineWorld)
 
@@ -129,6 +129,11 @@ FrozenLake comparison notebook additionally includes:
 - Shielded DQN (oracle, on-policy PLTD)
 - Shielded DQN (pretrained MLP, off-policy PLTD)
 - Shielded DQN (pretrained MLP, on-policy PLTD)
+
+Additional FrozenLake scripts:
+- `examples/frozenlake_oracle.py` (self-contained oracle-sensor SPPO run)
+- `examples/frozenlake_mlp.py` (self-contained pretrained-MLP sensor SPPO run)
+- `examples/frozenlake_dqn_sdqn_variant_matrix.ipynb` (DQN/SDQN variant matrix)
 
 ## Research Templates
 
@@ -267,7 +272,7 @@ Example pretrained MLP sensor block:
 
 - Designed for discrete action spaces in the shielded path
 - LineWorld is a minimal validation environment, not a benchmark suite
-- Sensor model in this repo is rule-based; trainable sensor models are planned as next extension
+- Includes both rule-based and pretrained MLP sensor examples (for research prototyping)
 
 ## License
 

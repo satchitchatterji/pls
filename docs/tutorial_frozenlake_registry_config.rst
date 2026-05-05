@@ -41,7 +41,6 @@ What this path gives you
 Suggested next steps
 --------------------
 
-1. Duplicate ``seed1/config.json`` for additional seeds/ablations.
+1. Duplicate ``examples/train_a_policy/frozenlake_plugin/seed1/config.json`` for additional seeds/ablations.
 2. Compare oracle/rule-based and pretrained sensor conditions.
 3. Sweep shield coefficient ``alpha`` and report reward-safety trade-offs.
-
