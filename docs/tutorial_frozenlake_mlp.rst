@@ -46,8 +46,8 @@ Saved artifacts
 ---------------
 
 - ``examples/frozenlake/frozenlake_sensor_mlp.pt``
-- ``examples/images/frozenlake/frozenlake_pretrain_loss.png``
-- ``examples/images/frozenlake/frozenlake_pretrained_curves.png``
+- ``examples/frozenlake/images/frozenlake_pretrain_loss.png``
+- ``examples/frozenlake/images/frozenlake_pretrained_curves.png``
 
 Why use this tutorial
 ---------------------

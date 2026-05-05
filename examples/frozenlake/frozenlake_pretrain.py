@@ -29,7 +29,7 @@ MLP_EPOCHS = 120
 MLP_LR = 1e-2
 
 ROOT = Path(__file__).resolve().parent
-OUTPUT_DIR = ROOT.parent / "images" / "frozenlake"
+OUTPUT_DIR = ROOT / "images"
 CHECKPOINT_PATH = ROOT / "frozenlake_sensor_mlp.pt"
 
 
@@ -118,6 +118,7 @@ def main():
         pbar.set_postfix(loss=f"{loss.item():.4f}")
 
     print("[3/4] Saving checkpoint...")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
         "state_dict": model.state_dict(),
         "grid_size": GRID_SIZE,

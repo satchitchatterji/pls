@@ -38,7 +38,7 @@ What it does
 4. Trains ``PPO_shielded`` end-to-end.
 5. Plots reward and failure-rate curves.
 6. Saves figures to:
-   - ``examples/images/frozenlake/frozenlake_oracle_curves.png``
+   - ``examples/frozenlake/images/frozenlake_oracle_curves.png``
 
 Why use this tutorial
 ---------------------

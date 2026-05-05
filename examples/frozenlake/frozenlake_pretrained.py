@@ -35,7 +35,7 @@ SHIELD_ALPHA = 0.1
 MA_WINDOW = 20
 
 ROOT = Path(__file__).resolve().parent
-OUTPUT_DIR = ROOT.parent / "images" / "frozenlake"
+OUTPUT_DIR = ROOT / "images"
 CHECKPOINT_PATH = ROOT / "frozenlake_sensor_mlp.pt"
 
 SHIELD_PROGRAM = """

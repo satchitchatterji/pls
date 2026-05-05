@@ -44,7 +44,7 @@ MLP_HIDDEN_SIZES = (16, 16)
 MLP_EPOCHS = 120
 MLP_LR = 1e-2
 MLP_TEMPERATURE = 1.0
-OUTPUT_DIR = Path(__file__).resolve().parent / "images" / "frozenlake"
+OUTPUT_DIR = Path(__file__).resolve().parent / "images"
 
 # FrozenLake 4x4 hole states in default map:
 # S F F F

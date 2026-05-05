@@ -29,7 +29,7 @@ from tqdm.auto import tqdm
 from pls.algorithms.ppo_shielded import PPO_shielded
 
 
-OUTPUT_DIR = Path(__file__).resolve().parent / "images" / "frozenlake"
+OUTPUT_DIR = Path(__file__).resolve().parent / "images"
 
 
 class EpisodeInfoWrapper(gym.Wrapper):

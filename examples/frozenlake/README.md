@@ -103,31 +103,31 @@ Let batch size be `B`, logits `z_{i,j}`, labels `y_{i,j}` with `j in {1,...,4}`.
 
 Sigmoid probability:
 
-\[
+$$
 \hat{y}_{i,j}=\sigma(z_{i,j})=\frac{1}{1+e^{-z_{i,j}}}
-\]
+$$
 
 Elementwise binary cross-entropy:
 
-\[
+$$
 \ell_{i,j}=-\left(y_{i,j}\log\hat{y}_{i,j}+(1-y_{i,j})\log(1-\hat{y}_{i,j})\right)
-\]
+$$
 
 Mean reduction used by default:
 
-\[
+$$
 \mathcal{L}=\frac{1}{4B}\sum_{i=1}^{B}\sum_{j=1}^{4}\ell_{i,j}
-\]
+$$
 
 Equivalent numerically stable logits form:
 
-\[
+$$
 \ell_{i,j}=\max(z_{i,j},0)-z_{i,j}y_{i,j}+\log\left(1+e^{-|z_{i,j}|}\right)
-\]
+$$
 
 Checkpoint output:
 
-- `frozenlake_sensor_mlp.pt`
+- `examples/frozenlake/frozenlake_sensor_mlp.pt`
 
 ## How Everything Ties Together
 
@@ -175,4 +175,4 @@ python examples/frozenlake/frozenlake_pretrained.py
 
 Generated figures are saved under:
 
-- `examples/images/frozenlake/`
+- `examples/frozenlake/images/`
