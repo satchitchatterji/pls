@@ -49,3 +49,8 @@ Use this path when you want a compact research script to compare:
 
 without introducing config/registry complexity.
 
+Related notebooks
+-----------------
+
+- ``examples/frozenlake/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb``
+- ``examples/frozenlake/frozenlake_dqn_sdqn_variant_matrix.ipynb``

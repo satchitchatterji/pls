@@ -5,6 +5,10 @@ CleanPLS is a stripped-down implementation of probabilistic logic shields for re
 Install from PyPI (package name): `clean-pls`  
 Import in Python: `import pls`
 
+Documentation:
+- Source: `docs/`
+- Built HTML index: `docs/_build/html/index.html`
+
 This repo focuses on:
 - Gymnasium-compatible environments
 - Shielded and unshielded policy learning with Stable-Baselines3
@@ -31,7 +35,7 @@ This repo focuses on:
   - `examples/train_a_policy/data/lineworld_safety.pl`
 - Benchmark notebooks with reward/safety curves:
   - `examples/lineworld_benchmark_curves.ipynb`
-  - `examples/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb`
+  - `examples/frozenlake/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb`
 - Basic tests for env/sensor/shield integration:
   - `tests/`
 
@@ -133,7 +137,7 @@ FrozenLake comparison notebook additionally includes:
 Additional FrozenLake scripts:
 - `examples/frozenlake_oracle.py` (self-contained oracle-sensor SPPO run)
 - `examples/frozenlake_mlp.py` (self-contained pretrained-MLP sensor SPPO run)
-- `examples/frozenlake_dqn_sdqn_variant_matrix.ipynb` (DQN/SDQN variant matrix)
+- `examples/frozenlake/frozenlake_dqn_sdqn_variant_matrix.ipynb` (DQN/SDQN variant matrix)
 
 ## Research Templates
 

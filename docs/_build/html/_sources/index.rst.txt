@@ -1,10 +1,11 @@
-CleanPLS Documentation
-======================
+|project_name| Documentation
+============================
 
-CleanPLS is a stripped-down implementation of probabilistic logic shields for reinforcement learning.
+|project_name| is a stripped-down implementation of probabilistic logic
+shields for reinforcement learning.
 
-Install package: ``pip install clean-pls``
-Import module: ``import pls``
+Install package: |cmd_pip_install|
+Import module: |import_namespace|
 
 .. toctree::
    :maxdepth: 2

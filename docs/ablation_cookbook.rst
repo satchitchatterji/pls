@@ -12,6 +12,11 @@ For each environment, run:
 - Shield + rule-based sensor
 - Shield + pretrained MLP sensor
 
+Recommended algorithm coverage:
+
+- policy-gradient family: A2C/PPO (+ shielded variants)
+- value-based family: DQN (+ SDQN/PLTD variants)
+
 Across:
 
 - seeds: at least 3
@@ -37,7 +42,7 @@ Columns:
 - alpha
 - seed
 - mean_reward
-- unsafe_rate
+- unsafe_rate or failure_rate (explicitly define which one you report)
 
 Run helper
 ----------
@@ -57,7 +62,7 @@ Recommended plots
 -----------------
 
 - reward vs alpha
-- unsafe rate vs alpha
+- unsafe/failure rate vs alpha
 - reward vs unsafe-rate Pareto scatter
 - per-seed boxplots for stability
 

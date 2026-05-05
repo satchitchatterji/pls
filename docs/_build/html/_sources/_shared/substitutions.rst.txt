@@ -1,0 +1,10 @@
+.. |project_name| replace:: CleanPLS
+.. |pypi_package| replace:: ``clean-pls``
+.. |import_namespace| replace:: ``pls``
+.. |python_min| replace:: ``Python 3.11+``
+.. |conda_env_name| replace:: ``CleanPLS``
+
+.. |cmd_pip_install| replace:: ``pip install clean-pls``
+.. |cmd_pip_editable| replace:: ``pip install -e .``
+.. |cmd_pip_docs| replace:: ``pip install -e .[docs]``
+.. |cmd_docs_build| replace:: ``make -C docs html``

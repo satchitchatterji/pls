@@ -46,3 +46,7 @@ Why use this tutorial
 Use this path when you want the fastest possible experiment loop and do not
 need framework-level abstraction yet.
 
+Related notebook
+----------------
+
+- ``examples/frozenlake/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb``
