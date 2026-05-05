@@ -12,6 +12,9 @@ Import module: ``import pls``
 
    installation
    quickstart
-   tutorial_add_new_environment
+   tutorial_frozenlake_oracle
+   tutorial_frozenlake_mlp
+   tutorial_frozenlake_registry_config
+   minimal_experiment_checklist
    ablation_cookbook
    api

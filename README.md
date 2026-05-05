@@ -219,7 +219,9 @@ make -C docs html
 Open:
 
 - `docs/_build/html/index.html`
-- `docs/_build/html/tutorial_add_new_environment.html`
+- `docs/_build/html/tutorial_frozenlake_oracle.html`
+- `docs/_build/html/tutorial_frozenlake_mlp.html`
+- `docs/_build/html/tutorial_frozenlake_registry_config.html`
 - `docs/_build/html/ablation_cookbook.html`
 
 ## Configuration Notes
