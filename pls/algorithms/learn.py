@@ -241,7 +241,7 @@ def main(
             n_steps=policy_cfg["n_steps"],
             **model_common,
         )
-    elif algorithm in {"dqn"}:
+    elif algorithm in {"dqn", "double_dqn", "rainbow"}:
         policy_kwargs["net_arch"] = policy_cfg.get("net_arch_pi", [64, 64])
         model_common.update(
             alpha=policy_cfg.get("alpha", 0),
@@ -261,6 +261,36 @@ def main(
             train_freq=policy_cfg.get("train_freq", 4),
             gradient_steps=policy_cfg.get("gradient_steps", 1),
             target_update_interval=policy_cfg.get("target_update_interval", 1000),
+            **model_common,
+        )
+    elif algorithm in {"sac", "td3", "ddpg"}:
+        model_common.update(
+            alpha=policy_cfg.get("alpha", 0),
+            policy_safety_params=policy_safety_params or None,
+            shield_params=shield_params or None,
+            config_folder=config_folder,
+            get_sensor_value_ground_truth=get_sensor_value_ground_truth,
+        )
+        model = model_cls(
+            buffer_size=policy_cfg.get("buffer_size", int(1e6)),
+            learning_starts=policy_cfg.get("learning_starts", 1000),
+            batch_size=policy_cfg.get("batch_size", 256),
+            train_freq=policy_cfg.get("train_freq", 1),
+            gradient_steps=policy_cfg.get("gradient_steps", 1),
+            tau=policy_cfg.get("tau", 0.005),
+            **model_common,
+        )
+    elif algorithm in {"trpo"}:
+        model_common.update(
+            alpha=policy_cfg.get("alpha", 0),
+            policy_safety_params=policy_safety_params or None,
+            shield_params=shield_params or None,
+            config_folder=config_folder,
+            get_sensor_value_ground_truth=get_sensor_value_ground_truth,
+        )
+        model = model_cls(
+            n_steps=policy_cfg.get("n_steps", 2048),
+            batch_size=policy_cfg.get("batch_size", 128),
             **model_common,
         )
     elif algorithm in {"dqn_vanilla"}:

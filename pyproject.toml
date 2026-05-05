@@ -26,6 +26,7 @@ dependencies = [
   "gymnasium",
   "torch",
   "stable-baselines3[extra]",
+  "sb3-contrib",
   "problog",
   "pysdd",
   "tensorboard",

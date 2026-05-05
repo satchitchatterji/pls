@@ -24,6 +24,12 @@ This repo focuses on:
   - `PPO_shielded`
   - `A2C_shielded`
   - `DQN_shielded` (PLTD-capable)
+  - `DoubleDQN_shielded`
+  - `Rainbow_shielded` (Rainbow-lite baseline)
+  - `SAC_shielded`
+  - `TD3_shielded`
+  - `DDPG_shielded`
+  - `TRPO_shielded` (requires `sb3-contrib`)
 - Unshielded baselines via SB3:
   - `PPO`
   - `A2C`
@@ -65,6 +71,8 @@ conda activate CleanPLS
 python -m ipykernel install --user --name CleanPLS --display-name "Python (CleanPLS)"
 ```
 
+This environment includes `stable-baselines3[extra]` and `sb3-contrib` (needed for TRPO).
+
 ## Install
 
 Published package install:
@@ -73,10 +81,18 @@ Published package install:
 pip install clean-pls
 ```
 
+`sb3-contrib` is installed as a dependency.
+
 Local development install:
 
 ```bash
 pip install -e .
+```
+
+If your environment was created before TRPO support, update with:
+
+```bash
+pip install -U sb3-contrib
 ```
 
 ## Quick Start: Train LineWorld Agent
@@ -239,7 +255,7 @@ Open:
 ## Configuration Notes
 
 Current workflow supports:
-- `algorithm: "ppo"`, `"a2c"`, `"dqn"`, or `"dqn_vanilla"`
+- `algorithm: "ppo"`, `"a2c"`, `"dqn"`, `"dqn_vanilla"`, `"double_dqn"`, `"rainbow"`, `"sac"`, `"td3"`, `"ddpg"`, `"trpo"`
 - Gymnasium environment IDs
 - optional `sensor` block with registry-backed construction
 

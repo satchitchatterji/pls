@@ -10,6 +10,7 @@ This tutorial-style script is self-contained (no registry/config files):
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 import gymnasium as gym
 import matplotlib.pyplot as plt
@@ -21,7 +22,12 @@ from tqdm.auto import tqdm
 
 from pls.algorithms.ppo_shielded import PPO_shielded
 
-from frozenlake_pretrain import FrozenLakeSensorMLP  # local tutorial module
+try:
+    from frozenlake_pretrain import FrozenLakeSensorMLP  # local tutorial module
+except ModuleNotFoundError:
+    # Allows execution from repository root via: python examples/frozenlake/frozenlake_pretrained.py
+    sys.path.append(str(Path(__file__).resolve().parent))
+    from frozenlake_pretrain import FrozenLakeSensorMLP  # type: ignore[no-redef]
 
 # =========================
 # Global Experiment Settings

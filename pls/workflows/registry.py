@@ -5,8 +5,14 @@ from typing import Callable, Dict, Optional, Type
 
 from pls.algorithms.a2c_shielded import A2C_shielded
 from pls.algorithms.dqn import DQN_standard
+from pls.algorithms.ddpg_shielded import DDPG_shielded
+from pls.algorithms.double_dqn_shielded import DoubleDQN_shielded
 from pls.algorithms.dqn_shielded import DQN_shielded
 from pls.algorithms.ppo_shielded import PPO_shielded
+from pls.algorithms.rainbow_shielded import Rainbow_shielded
+from pls.algorithms.sac_shielded import SAC_shielded
+from pls.algorithms.td3_shielded import TD3_shielded
+from pls.algorithms.trpo_shielded import TRPO_shielded
 
 
 @dataclass
@@ -24,6 +30,12 @@ ALGO_REGISTRY: Dict[str, Type] = {
     "a2c": A2C_shielded,
     "dqn_vanilla": DQN_standard,
     "dqn": DQN_shielded,
+    "double_dqn": DoubleDQN_shielded,
+    "rainbow": Rainbow_shielded,
+    "sac": SAC_shielded,
+    "td3": TD3_shielded,
+    "ddpg": DDPG_shielded,
+    "trpo": TRPO_shielded,
 }
 
 

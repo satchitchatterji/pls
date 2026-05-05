@@ -24,6 +24,36 @@ Algorithms
    :undoc-members:
    :show-inheritance:
 
+.. automodule:: pls.algorithms.double_dqn_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pls.algorithms.rainbow_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pls.algorithms.sac_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pls.algorithms.td3_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pls.algorithms.ddpg_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: pls.algorithms.trpo_shielded
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Environments
 ------------
 

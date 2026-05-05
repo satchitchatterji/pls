@@ -17,6 +17,7 @@ dependencies:
       - problog
       - pysdd
       - stable-baselines3[extra]
+      - sb3-contrib
       - pytest
       - jupyter
       - ipykernel
