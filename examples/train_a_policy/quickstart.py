@@ -12,7 +12,7 @@ if __name__ == "__main__":
     cwd = os.path.join(os.path.dirname(__file__))
 
     # location of the config file
-    config_file = os.path.join(cwd, r"carracing\PLPG_noisy\seed1\config.json")
+    config_file = os.path.join(cwd, "lineworld_rule_based", "seed1", "config.json")
 
     # trains the reinforcement agent using the parameters in the config file
     train(config_file)
