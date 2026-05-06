@@ -1,0 +1,10 @@
+variant,family,group,reason
+SAC/base,SAC,base,SAC in SB3 requires continuous (Box) action spaces.
+SAC/sbase(oracle),SAC,sbase(oracle),SAC in SB3 requires continuous (Box) action spaces.
+SAC/sbase(mlp),SAC,sbase(mlp),SAC in SB3 requires continuous (Box) action spaces.
+TD3/base,TD3,base,TD3 in SB3 requires continuous (Box) action spaces.
+TD3/sbase(oracle),TD3,sbase(oracle),TD3 in SB3 requires continuous (Box) action spaces.
+TD3/sbase(mlp),TD3,sbase(mlp),TD3 in SB3 requires continuous (Box) action spaces.
+DDPG/base,DDPG,base,DDPG in SB3 requires continuous (Box) action spaces.
+DDPG/sbase(oracle),DDPG,sbase(oracle),DDPG in SB3 requires continuous (Box) action spaces.
+DDPG/sbase(mlp),DDPG,sbase(mlp),DDPG in SB3 requires continuous (Box) action spaces.

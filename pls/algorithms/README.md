@@ -187,3 +187,21 @@ For all wrappers, the API is aligned with existing shielded classes:
 - `get_sensor_value_ground_truth`
 
 When a policy does not expose a discrete action distribution, the implementation uses a softmax relaxation over actor outputs when dimensions match `shield.num_actions`; otherwise the safety term is skipped.
+
+## Tentative Continuous-Action Handling (Current)
+
+Current continuous-action support is pragmatic and partial.
+
+1. Workflow/config path (`pls.algorithms.learn`) currently enforces discrete action spaces when shielding blocks are provided. If shielding is configured for a `Box` action space, preflight raises an error.
+
+2. Direct algorithm wrappers (`SAC_shielded`, `TD3_shielded`, `DDPG_shielded`, `TRPO_shielded`) can still be instantiated, but:
+   - predict-time shielding only applies when a discrete action distribution is available,
+   - otherwise prediction falls back to base algorithm behavior.
+
+3. For training-time safety regularization in continuous-control actor-critic wrappers, a softmax relaxation over actor outputs is used as a proxy categorical policy:
+   $$
+   \\tilde{\\pi}(a\\mid s)=\\mathrm{softmax}(u_\\phi(s)/\\tau).
+   $$
+   Safety loss is then computed from $P_{\\tilde{\\pi}}(\\mathrm{safe}\\mid s)$ if and only if action output width matches `shield.num_actions`; otherwise that safety term is skipped.
+
+This is why continuous-action shielding is treated as tentative: it is a useful bridge for experimentation, but not yet a full semantics-preserving continuous shielding framework.
