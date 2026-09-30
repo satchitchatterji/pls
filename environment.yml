@@ -3,7 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - pip
   - numpy
   - pandas
   - matplotlib
@@ -12,12 +11,10 @@ dependencies:
   - scikit-image
   - tensorboard
   - tqdm
-  - pip:
-      - -e .
-      - problog
-      - pysdd
-      - stable-baselines3[extra]
-      - sb3-contrib
-      - pytest
-      - jupyter
-      - ipykernel
+  - stable-baselines3
+  - sb3-contrib
+  - pytest
+  - jupyter
+  - ipykernel
+  - sphinx
+  - sphinx-rtd-theme

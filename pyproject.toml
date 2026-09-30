@@ -44,8 +44,6 @@ notebook = [
   "pandas"
 ]
 dev = [
-  "build",
-  "twine",
   "pytest",
   "jupyter",
   "ipykernel",

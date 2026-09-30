@@ -19,45 +19,18 @@ Environment name: |conda_env_name|
 
 The bundled ``environment.yml`` includes:
 
-- ``stable-baselines3[extra]``
+- ``stable-baselines3``
 - ``sb3-contrib`` (required for TRPO support)
 
-From PyPI
----------
+Source-tree workflow
+--------------------
 
-Command: |cmd_pip_install|
+CleanPLS is used directly from the repository in the documented research
+workflow. After activating the Conda environment, run examples and tests from
+the repository root. Python resolves the local ``pls`` package from the source
+tree, so no separate distribution installation is required.
 
-.. code-block:: bash
-
-   pip install clean-pls
-
-This installs ``sb3-contrib`` via package dependencies.
-
-For development
----------------
-
-Command: |cmd_pip_editable|
-
-.. code-block:: bash
-
-   pip install -e .
-
-This editable install also includes ``sb3-contrib`` from project dependencies.
-
-If you created your environment before TRPO support was added, run:
-
-.. code-block:: bash
-
-   pip install -U sb3-contrib
-
-Build docs dependencies
------------------------
-
-Command: |cmd_pip_docs|
-
-.. code-block:: bash
-
-   pip install -e .[docs]
+The environment specification includes the documentation dependencies.
 
 Build documentation
 -------------------

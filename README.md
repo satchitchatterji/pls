@@ -70,29 +70,11 @@ conda activate CleanPLS
 python -m ipykernel install --user --name CleanPLS --display-name "Python (CleanPLS)"
 ```
 
-This environment includes `stable-baselines3[extra]` and `sb3-contrib` (needed for TRPO).
+This environment includes `stable-baselines3` and `sb3-contrib` (needed for TRPO).
 
-## Install
-
-Published package install:
-
-```bash
-pip install clean-pls
-```
-
-`sb3-contrib` is installed as a dependency.
-
-Local development install:
-
-```bash
-pip install -e .
-```
-
-If your environment was created before TRPO support, update with:
-
-```bash
-pip install -U sb3-contrib
-```
+Run examples and tests directly from the repository root after activating the
+Conda environment. The local source tree provides the `pls` import namespace;
+no separate distribution installation is required.
 
 ## Quick Start: Train LineWorld Agent
 
@@ -203,41 +185,9 @@ python examples/train_a_policy/frozenlake_plugin/quickstart.py
 pytest -q tests/test_lineworld_and_sensors.py tests/test_shield_lineworld.py
 ```
 
-## Build and Publish
-
-Build artifacts:
-
-```bash
-python -m build
-```
-
-Validate package metadata:
-
-```bash
-twine check dist/*
-```
-
-Upload to PyPI:
-
-```bash
-twine upload dist/*
-```
-
-Recommended first release dry run (TestPyPI):
-
-```bash
-twine upload --repository testpypi dist/*
-```
-
 ## Documentation (Sphinx)
 
-Install docs dependencies:
-
-```bash
-pip install -e .[docs]
-```
-
-Build HTML docs:
+The Conda environment includes the documentation dependencies. Build HTML docs:
 
 ```bash
 make -C docs html
