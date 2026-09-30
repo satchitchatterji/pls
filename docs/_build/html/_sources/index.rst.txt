@@ -4,7 +4,7 @@
 |project_name| is a stripped-down implementation of probabilistic logic
 shields for reinforcement learning.
 
-Install package: |cmd_pip_install|
+Use the Conda environment described in :doc:`installation`.
 Import module: |import_namespace|
 
 .. toctree::

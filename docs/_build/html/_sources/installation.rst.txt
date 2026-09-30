@@ -17,32 +17,20 @@ Environment name: |conda_env_name|
    conda env create -f environment.yml
    conda activate CleanPLS
 
-From PyPI
----------
+The bundled ``environment.yml`` includes:
 
-Command: |cmd_pip_install|
+- ``stable-baselines3``
+- ``sb3-contrib`` (required for TRPO support)
 
-.. code-block:: bash
+Source-tree workflow
+--------------------
 
-   pip install clean-pls
+CleanPLS is used directly from the repository in the documented research
+workflow. After activating the Conda environment, run examples and tests from
+the repository root. Python resolves the local ``pls`` package from the source
+tree, so no separate distribution installation is required.
 
-For development
----------------
-
-Command: |cmd_pip_editable|
-
-.. code-block:: bash
-
-   pip install -e .
-
-Build docs dependencies
------------------------
-
-Command: |cmd_pip_docs|
-
-.. code-block:: bash
-
-   pip install -e .[docs]
+The environment specification includes the documentation dependencies.
 
 Build documentation
 -------------------
