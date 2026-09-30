@@ -89,6 +89,54 @@ Local development install:
 pip install -e .
 ```
 
+### Optional JAX backend and M4 benchmark
+
+The main CleanPLS training stack remains Torch/SB3. An optional JAX backend is
+provided for the FrozenLake MLP sensor, its discrete action shield, and a
+matched Torch-versus-JAX benchmark. The pure-JAX sensor/shield path keeps
+arrays on the selected JAX device; the Torch-compatible wrapper is available
+when connecting to the existing SB3 stack.
+
+```bash
+# JAX CPU support
+pip install -e '.[jax]'
+
+# Apple Silicon support through the JAX Metal plugin
+pip install -e '.[jax-macos]'
+```
+
+The `jax-macos` extra pins the currently validated combination `jax==0.5.0`,
+`jaxlib==0.5.0`, and `jax-metal==0.1.1`. This pin matters because newer JAX
+releases can enumerate the Metal device but fail when compiling basic random
+or training operations with the older Metal plugin.
+
+On an M4 Mac, the benchmark treats Torch `mps` and JAX `metal` as optional
+accelerators. It records a backend as skipped when the local installation does
+not expose that device, rather than falling back silently to CPU:
+
+```bash
+python examples/frozenlake/benchmark_torch_vs_jax.py
+```
+
+The benchmark compares the same 16-16-16-4 MLP, BCE-with-logits objective,
+batch size, warm-up, and optimizer settings in both frameworks. It writes a
+CSV and timing plot to `examples/frozenlake/images/`. JAX Metal compatibility
+depends on the installed JAX and `jax-metal` versions, so the CSV is the
+source of truth for the devices actually available on a given Mac.
+
+To benchmark the expanded device-resident JAX pipeline, including vectorized
+FrozenLake transitions, sensor inference, policy/value updates, shield
+masking, and PPO-style losses:
+
+```bash
+python examples/frozenlake/benchmark_jax_gpu_pipeline.py
+```
+
+This uses a JAX implementation of the deterministic 4x4 transition function
+so Gymnasium stepping does not pull the timed workload back to Python/CPU. The
+script preserves the earlier sensor-only measurements and writes a combined
+comparison to `examples/frozenlake/images/`.
+
 If your environment was created before TRPO support, update with:
 
 ```bash

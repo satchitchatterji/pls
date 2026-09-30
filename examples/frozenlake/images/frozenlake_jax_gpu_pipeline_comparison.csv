@@ -1,0 +1,7 @@
+backend,device,status,steps,batch_size,seconds,step_ms,steps_per_second,final_loss,jax_device,jax_version,jax_config,workload,metric_ms,metric_label,updates,num_envs,rollout_steps,transitions,update_ms,transitions_per_second,mean_policy_safety,final_sensor_bce
+torch,cpu,ok,500.0,4096.0,0.211840666946955,0.42368133389391,2360.2644723791404,5.835395859321579e-05,,,,sensor-only baseline,0.42368133389391,ms per sensor-training step,,,,,,,,
+torch,mps,ok,500.0,4096.0,0.3184605420101434,0.6369210840202868,1570.0532218025123,5.835505362483673e-05,,,,sensor-only baseline,0.6369210840202868,ms per sensor-training step,,,,,,,,
+jax,cpu,ok,500.0,4096.0,0.2145470000104978,0.4290940000209957,2330.49168702212,5.7417732023168355e-05,TFRT_CPU_0,0.5.0,"[16, 16]",sensor-only baseline,0.4290940000209957,ms per sensor-training step,,,,,,,,
+jax,metal,ok,500.0,4096.0,0.1691279999213293,0.3382559998426586,2956.3407610364775,5.734707883675583e-05,METAL:0,0.5.0,"[16, 16]",sensor-only baseline,0.3382559998426586,ms per sensor-training step,,,,,,,,
+jax,cpu,ok,,,0.18037233303766698,,,0.0011046744184568524,TFRT_CPU_0,0.5.0,,full JAX pipeline,1.8037233303766698,ms per PPO-style update,100.0,256.0,16.0,409600.0,1.8037233303766698,2270858.2469489025,0.8193857669830322,0.41271185874938965
+jax,metal,ok,,,0.5698544589104131,,,0.25684717297554016,METAL:0,0.5.0,,full JAX pipeline,5.698544589104131,ms per PPO-style update,100.0,256.0,16.0,409600.0,5.698544589104131,718780.0211007795,0.8254023790359497,0.41271185874938965

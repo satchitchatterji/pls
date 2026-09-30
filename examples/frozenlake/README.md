@@ -176,3 +176,90 @@ python examples/frozenlake/frozenlake_pretrained.py
 Generated figures are saved under:
 
 - `examples/frozenlake/images/`
+
+## Optional JAX Sensor Backend
+
+The file `frozenlake_jax.py` pretrains the same one-hot-state MLP using JAX
+and saves a portable `.npz` checkpoint. It is a parallel sensor implementation
+for backend experiments; it does not replace the Torch/SB3 shielded algorithms.
+The resulting checkpoint can be loaded with
+`pls.jax.FrozenLakeMLPSensorModel.from_checkpoint(...)`, whose `predict(obs,
+info=None)` method follows the generic CleanPLS sensor interface.
+
+For a fully JAX-native sensor-to-shield path, use
+`FrozenLakeJaxSensorModel` together with `FrozenLakeJaxShield`. The sensor
+returns JAX arrays, and the shield masks and renormalizes the policy on the
+same JAX device. This avoids the CPU Torch conversion used only by the
+compatibility wrapper for the existing SB3 shield.
+
+Install the optional backend with:
+
+```bash
+pip install -e '.[jax]'
+```
+
+For an M4 Mac, install the Metal plugin as well:
+
+```bash
+pip install -e '.[jax-macos]'
+```
+
+This extra pins the tested Apple Silicon combination `jax==0.5.0`,
+`jaxlib==0.5.0`, and `jax-metal==0.1.1`. The Metal plugin is experimental, and
+using an unpinned newer JAX release can allow device discovery to succeed while
+training compilation still fails.
+
+Then run the sensor pretraining example from the repository root:
+
+```bash
+python examples/frozenlake/frozenlake_jax.py
+```
+
+To benchmark the identical MLP training workload in Torch and JAX on CPU and
+available Apple GPU backends:
+
+```bash
+python examples/frozenlake/benchmark_torch_vs_jax.py
+```
+
+The benchmark uses Torch `mps` and JAX `metal` when available on Apple
+Silicon. Missing or incompatible accelerators are reported as skipped, and
+the results are saved as CSV plus a timing plot in `images/`.
+
+## Device-Resident JAX Pipeline
+
+`benchmark_jax_gpu_pipeline.py` extends the sensor-only comparison into a
+fully JAX-native accelerator workload. During each timed update, the selected
+JAX device handles:
+
+- batched FrozenLake transitions,
+- sensor inference,
+- actor and critic forward passes,
+- action sampling,
+- shield masking and policy renormalization,
+- generalized advantage estimation,
+- PPO-style policy, value, entropy, and safety losses,
+- Adam updates.
+
+Only setup, final scalar conversion, and artifact writing remain on the host.
+The benchmark uses deterministic 4x4 transitions equivalent to the map used by
+the sensor labels, rather than stepping Gymnasium's Python environment inside
+the timed loop.
+
+Run it from the repository root:
+
+```bash
+python examples/frozenlake/benchmark_jax_gpu_pipeline.py
+```
+
+The current M4 reference run used 100 updates, 256 parallel environments, and
+16 rollout steps. It measured approximately 1.80 ms/update on JAX CPU and
+5.70 ms/update on JAX Metal. The CPU result is faster here because this tiny
+workload does not provide enough parallel work to amortize Metal dispatch and
+compilation overhead. Larger maps, batches, or networks are more appropriate
+for assessing accelerator scaling.
+
+Outputs:
+
+- `images/frozenlake_jax_gpu_pipeline_comparison.csv`
+- `images/frozenlake_jax_gpu_pipeline_comparison.png`
