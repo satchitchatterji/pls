@@ -32,7 +32,7 @@ if TRPO is None:
 
         def __init__(self, *args, **kwargs):
             raise ImportError(
-                "TRPO_shielded requires sb3-contrib. Install with `pip install sb3-contrib`."
+                "TRPO_shielded requires sb3-contrib. Add it to the project environment."
             )
 
 else:
