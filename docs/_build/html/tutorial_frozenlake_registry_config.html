@@ -1,0 +1,198 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 3: FrozenLake with Registry + Config Workflow &mdash; CleanPLS 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Minimal Experiment Checklist (Generic Gymnasium Env)" href="minimal_experiment_checklist.html" />
+    <link rel="prev" title="Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)" href="tutorial_frozenlake_mlp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CleanPLS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_oracle.html">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_mlp.html">Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 3: FrozenLake with Registry + Config Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#key-files">Key files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#goal">Goal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#current-status-of-the-bundled-config">Current status of the bundled config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run">Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-this-path-gives-you">What this path gives you</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-config-fields-for-dqn-studies">Recommended config fields for DQN studies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-next-steps">Suggested next steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#related-notebooks">Related notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="minimal_experiment_checklist.html">Minimal Experiment Checklist (Generic Gymnasium Env)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablation_cookbook.html">Ablation Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CleanPLS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorial 3: FrozenLake with Registry + Config Workflow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial_frozenlake_registry_config.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial-3-frozenlake-with-registry-config-workflow">
+<h1>Tutorial 3: FrozenLake with Registry + Config Workflow<a class="headerlink" href="#tutorial-3-frozenlake-with-registry-config-workflow" title="Link to this heading"></a></h1>
+<p>This tutorial uses the repository’s registry/config resources for a reusable,
+multi-experiment workflow.</p>
+<section id="key-files">
+<h2>Key files<a class="headerlink" href="#key-files" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Registration entrypoint:
+- <code class="docutils literal notranslate"><span class="pre">examples/train_a_policy/frozenlake_plugin/research_registration.py</span></code></p></li>
+<li><p>Workflow quickstart:
+- <code class="docutils literal notranslate"><span class="pre">examples/train_a_policy/frozenlake_plugin/quickstart.py</span></code></p></li>
+<li><p>Experiment config:
+- <code class="docutils literal notranslate"><span class="pre">examples/train_a_policy/frozenlake_plugin/seed1/config.json</span></code></p></li>
+</ul>
+</section>
+<section id="goal">
+<h2>Goal<a class="headerlink" href="#goal" title="Link to this heading"></a></h2>
+<p>Run FrozenLake by registering runtime/sensor once, then driving experiments
+through config files.</p>
+</section>
+<section id="current-status-of-the-bundled-config">
+<h2>Current status of the bundled config<a class="headerlink" href="#current-status-of-the-bundled-config" title="Link to this heading"></a></h2>
+<p>The shipped example config currently demonstrates an <code class="docutils literal notranslate"><span class="pre">a2c</span></code>-based run.
+You can reuse the same pattern for:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ppo</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dqn</span></code> (shielded DQN / PLTD)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dqn_vanilla</span></code></p></li>
+</ul>
+<p>by editing the algorithm and policy parameter blocks in your copied config.</p>
+</section>
+<section id="run">
+<h2>Run<a class="headerlink" href="#run" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/train_a_policy/frozenlake_plugin/quickstart.py
+</pre></div>
+</div>
+</section>
+<section id="what-this-path-gives-you">
+<h2>What this path gives you<a class="headerlink" href="#what-this-path-gives-you" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Clear separation of responsibilities:
+- runtime wiring in registration file,
+- experiment parameters in config.</p></li>
+<li><p>Easy reproducibility and parameter sweeps.</p></li>
+<li><p>Direct compatibility with workflow utilities such as:
+- <code class="docutils literal notranslate"><span class="pre">pls.workflows.execute_workflow.train</span></code>
+- <code class="docutils literal notranslate"><span class="pre">examples/research_compare.py</span></code></p></li>
+</ol>
+</section>
+<section id="recommended-config-fields-for-dqn-studies">
+<h2>Recommended config fields for DQN studies<a class="headerlink" href="#recommended-config-fields-for-dqn-studies" title="Link to this heading"></a></h2>
+<p>When using <code class="docutils literal notranslate"><span class="pre">algorithm:</span> <span class="pre">&quot;dqn&quot;</span></code>, additionally consider:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">exploration_policy</span></code>: <code class="docutils literal notranslate"><span class="pre">&quot;epsilon_greedy&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;softmax&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">differentiable_exploration</span></code>: <code class="docutils literal notranslate"><span class="pre">true</span></code>/<code class="docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pltd_mode</span></code>: <code class="docutils literal notranslate"><span class="pre">&quot;off_policy&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;on_policy&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">softmax_temperature</span></code>: float value for softmax policy shaping</p></li>
+</ul>
+</section>
+<section id="suggested-next-steps">
+<h2>Suggested next steps<a class="headerlink" href="#suggested-next-steps" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Duplicate <code class="docutils literal notranslate"><span class="pre">examples/train_a_policy/frozenlake_plugin/seed1/config.json</span></code> for additional seeds/ablations.</p></li>
+<li><p>Compare oracle/rule-based and pretrained sensor conditions.</p></li>
+<li><p>Sweep shield coefficient <code class="docutils literal notranslate"><span class="pre">alpha</span></code> and report reward-safety trade-offs.</p></li>
+</ol>
+</section>
+<section id="related-notebooks">
+<h2>Related notebooks<a class="headerlink" href="#related-notebooks" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/frozenlake/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/frozenlake/frozenlake_dqn_sdqn_variant_matrix.ipynb</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial_frozenlake_mlp.html" class="btn btn-neutral float-left" title="Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="minimal_experiment_checklist.html" class="btn btn-neutral float-right" title="Minimal Experiment Checklist (Generic Gymnasium Env)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CleanPLS Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

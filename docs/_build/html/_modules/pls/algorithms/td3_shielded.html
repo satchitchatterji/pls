@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pls.algorithms.td3_shielded &mdash; CleanPLS 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CleanPLS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_frozenlake_oracle.html">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_frozenlake_mlp.html">Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_frozenlake_registry_config.html">Tutorial 3: FrozenLake with Registry + Config Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../minimal_experiment_checklist.html">Minimal Experiment Checklist (Generic Gymnasium Env)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablation_cookbook.html">Ablation Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CleanPLS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pls.algorithms.td3_shielded</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pls.algorithms.td3_shielded</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">spaces</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">TD3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3.common.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">polyak_update</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pls.algorithms._shielding_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">action_logits_to_probs</span><span class="p">,</span>
+    <span class="n">build_shield</span><span class="p">,</span>
+    <span class="n">compute_policy_safety_loss</span><span class="p">,</span>
+    <span class="n">maybe_warn_missing_relaxation</span><span class="p">,</span>
+    <span class="n">shielded_discrete_predict</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="TD3_shielded">
+<a class="viewcode-back" href="../../../api.html#pls.algorithms.td3_shielded.TD3_shielded">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TD3_shielded</span><span class="p">(</span><span class="n">TD3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TD3 wrapper with CleanPLS shield-compatible API.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">shield_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">policy_safety_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_sensor_value_ground_truth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shield_params</span> <span class="o">=</span> <span class="n">shield_params</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_params</span> <span class="o">=</span> <span class="n">policy_safety_params</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exploration_shield</span> <span class="o">=</span> <span class="n">build_shield</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shield_params</span><span class="p">,</span>
+            <span class="n">config_folder</span><span class="o">=</span><span class="n">config_folder</span><span class="p">,</span>
+            <span class="n">get_sensor_value_ground_truth</span><span class="o">=</span><span class="n">get_sensor_value_ground_truth</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span> <span class="o">=</span> <span class="n">build_shield</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_params</span><span class="p">,</span>
+            <span class="n">config_folder</span><span class="o">=</span><span class="n">config_folder</span><span class="p">,</span>
+            <span class="n">get_sensor_value_ground_truth</span><span class="o">=</span><span class="n">get_sensor_value_ground_truth</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exploration_shield</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;TD3_shielded received shield_params but action space is not Discrete; &quot;</span>
+                <span class="s2">&quot;falling back to base TD3 action selection.&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+            <span class="n">num_actions</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">num_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span><span class="o">.</span><span class="n">num_actions</span>
+            <span class="n">maybe_warn_missing_relaxation</span><span class="p">(</span>
+                <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="n">shield</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span><span class="p">,</span>
+                <span class="n">action_dim</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)),</span>
+                <span class="n">num_actions</span><span class="o">=</span><span class="n">num_actions</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="TD3_shielded.predict">
+<a class="viewcode-back" href="../../../api.html#pls.algorithms.td3_shielded.TD3_shielded.predict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">episode_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exploration_shield</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">episode_start</span><span class="p">,</span> <span class="n">deterministic</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">shielded_discrete_predict</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">observation</span><span class="o">=</span><span class="n">observation</span><span class="p">,</span>
+            <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+            <span class="n">episode_start</span><span class="o">=</span><span class="n">episode_start</span><span class="p">,</span>
+            <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span>
+            <span class="n">shield</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exploration_shield</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TD3_shielded.train">
+<a class="viewcode-back" href="../../../api.html#pls.algorithms.td3_shielded.TD3_shielded.train">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gradient_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">set_training_mode</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_learning_rate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">optimizer</span><span class="p">])</span>
+
+        <span class="n">actor_losses</span><span class="p">,</span> <span class="n">critic_losses</span><span class="p">,</span> <span class="n">safety_losses</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gradient_steps</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n_updates</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">replay_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">replay_buffer</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vec_normalize_env</span><span class="p">)</span>  <span class="c1"># type: ignore[union-attr]</span>
+            <span class="n">discounts</span> <span class="o">=</span> <span class="n">replay_data</span><span class="o">.</span><span class="n">discounts</span> <span class="k">if</span> <span class="n">replay_data</span><span class="o">.</span><span class="n">discounts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+
+            <span class="k">with</span> <span class="n">th</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">replay_data</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_policy_noise</span><span class="p">)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">target_noise_clip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_noise_clip</span><span class="p">)</span>
+                <span class="n">next_actions</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actor_target</span><span class="p">(</span><span class="n">replay_data</span><span class="o">.</span><span class="n">next_observations</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">next_q_values</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_target</span><span class="p">(</span><span class="n">replay_data</span><span class="o">.</span><span class="n">next_observations</span><span class="p">,</span> <span class="n">next_actions</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">next_q_values</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">next_q_values</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">target_q_values</span> <span class="o">=</span> <span class="n">replay_data</span><span class="o">.</span><span class="n">rewards</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">replay_data</span><span class="o">.</span><span class="n">dones</span><span class="p">)</span> <span class="o">*</span> <span class="n">discounts</span> <span class="o">*</span> <span class="n">next_q_values</span>
+
+            <span class="n">current_q_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">replay_data</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">replay_data</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span>
+            <span class="n">critic_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">current_q</span><span class="p">,</span> <span class="n">target_q_values</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_q</span> <span class="ow">in</span> <span class="n">current_q_values</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">critic_loss</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+            <span class="n">critic_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">critic_loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">critic_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_updates</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_delay</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">actor_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">replay_data</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+                <span class="n">actor_loss_base</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">q1_forward</span><span class="p">(</span><span class="n">replay_data</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">actor_actions</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+                <span class="n">safety_loss</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">actor_loss_base</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">base_actions</span> <span class="o">=</span> <span class="n">action_logits_to_probs</span><span class="p">(</span>
+                        <span class="n">actor_actions</span><span class="p">,</span>
+                        <span class="n">num_actions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">base_actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">safety_loss</span> <span class="o">=</span> <span class="n">compute_policy_safety_loss</span><span class="p">(</span>
+                            <span class="n">shield</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_safety_calculater</span><span class="p">,</span>
+                            <span class="n">observations</span><span class="o">=</span><span class="n">replay_data</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span>
+                            <span class="n">base_actions</span><span class="o">=</span><span class="n">base_actions</span><span class="p">,</span>
+                        <span class="p">)</span>
+                <span class="n">actor_loss</span> <span class="o">=</span> <span class="n">actor_loss_base</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">safety_loss</span>
+
+                <span class="n">actor_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">actor_loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+                <span class="n">safety_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">safety_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">actor_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+                <span class="n">polyak_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic_target</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
+                <span class="n">polyak_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor_target</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
+                <span class="n">polyak_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_batch_norm_stats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic_batch_norm_stats_target</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+                <span class="n">polyak_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actor_batch_norm_stats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor_batch_norm_stats_target</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="s2">&quot;train/n_updates&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_updates</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="s2">&quot;tensorboard&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">actor_losses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="s2">&quot;train/actor_loss&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">actor_losses</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="s2">&quot;train/safety_loss&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">safety_losses</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">safety_losses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="s2">&quot;train/critic_loss&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">critic_losses</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CleanPLS Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

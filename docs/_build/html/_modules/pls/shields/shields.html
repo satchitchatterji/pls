@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pls.shields.shields &mdash; CleanPLS 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CleanPLS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_frozenlake_oracle.html">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_frozenlake_mlp.html">Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_frozenlake_registry_config.html">Tutorial 3: FrozenLake with Registry + Config Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../minimal_experiment_checklist.html">Minimal Experiment Checklist (Generic Gymnasium Env)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablation_cookbook.html">Ablation Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CleanPLS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pls.shields.shields</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pls.shields.shields</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">th</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pls.shields.deepproblog</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeepProbLogLayer</span><span class="p">,</span> <span class="n">DeepProbLogLayer_Optimized</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+
+
+<div class="viewcode-block" id="Shield">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Shield</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shield structure for RL algorithms. It takes a policy and a set of observations to produce a safer policy</span>
+<span class="sd">    using background knowledge. The structure is a compiled problog program. It is intended to be used on top of a policy network.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_sensors: Number of sensors.</span>
+<span class="sd">    num_actions: Number of available discrete actions.</span>
+<span class="sd">    config_folder: location of the config file</span>
+<span class="sd">    observation_type:Observation type (&quot;ground truth&quot; or &quot;pretrained&quot;)</span>
+<span class="sd">    noisy_observations: Boolean indicating whether noisy observations are used</span>
+<span class="sd">    shield_layer: deep problog layer as the shield</span>
+<span class="sd">    observation_model: observation net object</span>
+<span class="sd">    get_sensor_value_ground_truth: function used to compute ground truth observations from image input</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">program_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_sensor_value_ground_truth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sensor_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">net_input_dim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_sensors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">shield_program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">observation_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">noisy_observations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">observation_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">observation_net_cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">config_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">shield_program</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_folder</span><span class="p">,</span> <span class="n">shield_program</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">program</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">program_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">program</span> <span class="o">=</span> <span class="n">program_str</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either config_folder and shield_program or program_str must be provided.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_sensors</span> <span class="o">=</span> <span class="n">num_sensors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span> <span class="o">=</span> <span class="n">num_actions</span>
+        <span class="c1"># Backward-compatibility: ignore legacy flag if present in kwargs.</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;differentiable&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">=</span> <span class="n">observation_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sensor_model</span> <span class="o">=</span> <span class="n">sensor_model</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">program</span> <span class="o">=</span> <span class="n">program</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_shield</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
+
+        <span class="c1"># get sensor values from the pretrained observation network</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sensor_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">=</span> <span class="s2">&quot;sensor_model&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">==</span> <span class="s2">&quot;pretrained&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noisy_observations</span> <span class="o">=</span> <span class="n">noisy_observations</span>
+            <span class="n">use_cuda</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">use_cuda</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_model</span> <span class="o">=</span> <span class="n">observation_net_cls</span><span class="p">(</span>
+                <span class="n">input_size</span><span class="o">=</span><span class="n">net_input_dim</span><span class="o">*</span><span class="n">net_input_dim</span><span class="p">,</span>
+                <span class="n">output_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sensors</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">observation_net_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_folder</span><span class="p">,</span> <span class="n">observation_net</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">observation_net_path</span><span class="p">))</span>
+            
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">==</span> <span class="s2">&quot;ground truth&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_sensor_value_ground_truth</span> <span class="o">=</span> <span class="n">get_sensor_value_ground_truth</span>
+
+<div class="viewcode-block" id="Shield.get_layer">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield.get_layer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">program</span><span class="p">,</span> <span class="n">evidences</span><span class="p">,</span> <span class="n">input_struct</span><span class="p">,</span> <span class="n">query_struct</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a problog layer.</span>
+
+<span class="sd">        :param program: problog program</span>
+<span class="sd">        :param queries: problog queries</span>
+<span class="sd">        :param evidences: problog evidence</span>
+<span class="sd">        :param input_struct: dict containing input values to the problog program</span>
+<span class="sd">        :param query_struct: dict containing output</span>
+<span class="sd">        :return: a problog layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">query_struct</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="c1"># layer = DeepProbLogLayer_Optimized(</span>
+        <span class="c1">#     program=program,</span>
+        <span class="c1">#     queries=queries,</span>
+        <span class="c1">#     evidences=evidences,</span>
+        <span class="c1">#     input_struct=input_struct,</span>
+        <span class="c1">#     query_struct=query_struct,</span>
+        <span class="c1"># )</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">DeepProbLogLayer</span><span class="p">(</span>
+            <span class="n">program</span><span class="o">=</span><span class="n">program</span><span class="p">,</span>
+            <span class="n">queries</span><span class="o">=</span><span class="n">queries</span><span class="p">,</span>
+            <span class="n">evidences</span><span class="o">=</span><span class="n">evidences</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">layer</span></div>
+
+    
+<div class="viewcode-block" id="Shield.update_shield">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield.update_shield">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_shield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_program_str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the shield with a new problog program.</span>
+
+<span class="sd">        :param new_program_str: new problog program string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program</span> <span class="o">=</span> <span class="n">new_program_str</span>
+        <span class="n">debug_query_struct</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;safe_next&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="n">debug_input_struct</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sensor_value&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sensors</span><span class="p">)],</span>
+            <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sensors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sensors</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shield_layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span>
+            <span class="n">program</span><span class="o">=</span><span class="n">new_program_str</span><span class="p">,</span>
+            <span class="n">evidences</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">input_struct</span><span class="o">=</span><span class="n">debug_input_struct</span><span class="p">,</span>
+            <span class="n">query_struct</span><span class="o">=</span><span class="n">debug_query_struct</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Shield.get_policy_safety">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield.get_policy_safety">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_policy_safety</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensor_values</span><span class="p">,</span> <span class="n">base_actions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute how safe it is to follow the given policy given sensor values.</span>
+
+<span class="sd">        :param sensor_values: tensor of sensor values (observed or ground truth)</span>
+<span class="sd">        :param base_actions: tensor of the action probability distribution</span>
+<span class="sd">        :return: probability representing safety</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shield_layer</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;sensor_value&quot;</span><span class="p">:</span> <span class="n">sensor_values</span><span class="p">,</span>
+                <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">base_actions</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">policy_safety</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;safe_next&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">policy_safety</span></div>
+
+
+<div class="viewcode-block" id="Shield.get_action_safeties">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield.get_action_safeties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_action_safeties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensor_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute how safe it is to execute an action.</span>
+
+<span class="sd">        :param sensor_values: tensor of sensor values (observed or ground truth)</span>
+<span class="sd">        :return: tensor of probabilities representing safety of actions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_actions</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">action_safeties</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">all_actions</span><span class="p">:</span>
+            <span class="n">base_actions</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">sensor_values</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shield_layer</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;sensor_value&quot;</span><span class="p">:</span> <span class="n">sensor_values</span><span class="p">,</span>
+                    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">base_actions</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">action_safety</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;safe_next&quot;</span><span class="p">]</span>
+            <span class="n">action_safeties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action_safety</span><span class="p">)</span>
+        <span class="n">action_safeties</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">action_safeties</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">action_safeties</span></div>
+
+
+<div class="viewcode-block" id="Shield.get_shielded_policy">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield.get_shielded_policy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_shielded_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_actions</span><span class="p">,</span> <span class="n">sensor_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the shielded policy.</span>
+
+<span class="sd">        :param base_actions: tensor of the action probability distribution</span>
+<span class="sd">        :param sensor_values: tensor of sensor values (observed or ground truth)</span>
+<span class="sd">        :return: tensor representing the shielded policy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">policy_safety</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_policy_safety</span><span class="p">(</span><span class="n">sensor_values</span><span class="p">,</span> <span class="n">base_actions</span><span class="p">)</span>
+        <span class="n">action_safeties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action_safeties</span><span class="p">(</span><span class="n">sensor_values</span><span class="p">)</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">action_safeties</span> <span class="o">*</span> <span class="n">base_actions</span> <span class="o">/</span> <span class="n">policy_safety</span>
+
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># print(action_safeties, policy_safety)</span>
+        <span class="k">assert</span> <span class="n">actions</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mf">1.00001</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actions</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">actions</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> violates MAX</span><span class="se">\n</span><span class="si">{</span><span class="n">action_safeties</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">base_actions</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">sensor_values</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">policy_safety</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">actions</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">0.00001</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actions</span><span class="si">}</span><span class="s2"> violates MIN&quot;</span>
+
+        <span class="k">return</span> <span class="n">actions</span></div>
+
+
+<div class="viewcode-block" id="Shield.get_sensor_values">
+<a class="viewcode-back" href="../../../api.html#pls.shields.shields.Shield.get_sensor_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sensor_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns ground truth sensor values or ones from the observation network.</span>
+
+<span class="sd">        :param x: tensor representing the states to extract features from</span>
+<span class="sd">        :return: tensor of sensor values in [0, 1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">==</span> <span class="s2">&quot;pretrained&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">th</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>  <span class="c1"># do not update the observation net</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noisy_observations</span><span class="p">:</span>
+                    <span class="n">sensor_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_model</span><span class="o">.</span><span class="n">get_sensor_values</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sensor_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_model</span><span class="o">.</span><span class="n">get_sensor_values</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                    <span class="n">sensor_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">sensor_values</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">==</span> <span class="s2">&quot;ground truth&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">th</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>  <span class="c1"># do not update the observation net</span>
+                <span class="n">sensor_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sensor_value_ground_truth</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span> <span class="o">==</span> <span class="s2">&quot;sensor_model&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">th</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">sensor_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sensor_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported observation_type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sensor_values</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CleanPLS Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minimal Experiment Checklist (Generic Gymnasium Env) &mdash; CleanPLS 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ablation Cookbook" href="ablation_cookbook.html" />
+    <link rel="prev" title="Tutorial 3: FrozenLake with Registry + Config Workflow" href="tutorial_frozenlake_registry_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CleanPLS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_oracle.html">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_mlp.html">Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_registry_config.html">Tutorial 3: FrozenLake with Registry + Config Workflow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Minimal Experiment Checklist (Generic Gymnasium Env)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#environment">1. Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#safety-objective">2. Safety Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sensor-wrapper">3. Sensor Wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shield-program-problog">4. Shield Program (ProbLog)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#policy-shield-wiring">5. Policy + Shield Wiring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#logging-and-instrumentation">6. Logging and Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#baselines-and-comparisons">7. Baselines and Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plots-and-artifacts">8. Plots and Artifacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reproducibility">9. Reproducibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preflight-sanity-checks">10. Preflight Sanity Checks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablation_cookbook.html">Ablation Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CleanPLS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Minimal Experiment Checklist (Generic Gymnasium Env)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/minimal_experiment_checklist.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="minimal-experiment-checklist-generic-gymnasium-env">
+<h1>Minimal Experiment Checklist (Generic Gymnasium Env)<a class="headerlink" href="#minimal-experiment-checklist-generic-gymnasium-env" title="Link to this heading"></a></h1>
+<p>Use this checklist before running a new safety experiment in CleanPLS-style workflows.</p>
+<section id="environment">
+<h2>1. Environment<a class="headerlink" href="#environment" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Gymnasium env id/constructor runs with valid <code class="docutils literal notranslate"><span class="pre">reset</span></code>/<code class="docutils literal notranslate"><span class="pre">step</span></code> behavior.</p></li>
+<li><p>Action space is discrete (current shielded path assumption).</p></li>
+<li><p>Observation format and shape are known.</p></li>
+</ul>
+</section>
+<section id="safety-objective">
+<h2>2. Safety Objective<a class="headerlink" href="#safety-objective" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Unsafe condition is explicitly defined in environment terms.</p></li>
+<li><p>Safety metric is selected:
+- unsafe-event rate, or
+- failure/cost rate, or
+- cumulative safety cost.</p></li>
+</ul>
+</section>
+<section id="sensor-wrapper">
+<h2>3. Sensor Wrapper<a class="headerlink" href="#sensor-wrapper" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Safety-relevant sensor variables are chosen.</p></li>
+<li><p>Sensor index ordering is fixed and documented.</p></li>
+<li><p>Wrapper implements:
+- <code class="docutils literal notranslate"><span class="pre">predict(obs,</span> <span class="pre">info=None)</span> <span class="pre">-&gt;</span> <span class="pre">tensor[batch,</span> <span class="pre">num_sensors]</span></code> with values in <code class="docutils literal notranslate"><span class="pre">[0,1]</span></code>.</p></li>
+</ul>
+</section>
+<section id="shield-program-problog">
+<h2>4. Shield Program (ProbLog)<a class="headerlink" href="#shield-program-problog" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Action declarations are present.</p></li>
+<li><p>Sensor declarations are present.</p></li>
+<li><p>Unsafe clauses are present.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">safe_next</span> <span class="pre">:-</span> <span class="pre">\+</span> <span class="pre">unsafe_next.</span></code> is present.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_actions</span></code> and <code class="docutils literal notranslate"><span class="pre">num_sensors</span></code> match code/config.</p></li>
+</ul>
+</section>
+<section id="policy-shield-wiring">
+<h2>5. Policy + Shield Wiring<a class="headerlink" href="#policy-shield-wiring" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Shield receives expected observations and sensor outputs.</p></li>
+<li><p>Shield params are complete:
+- <code class="docutils literal notranslate"><span class="pre">num_sensors</span></code>
+- <code class="docutils literal notranslate"><span class="pre">num_actions</span></code>
+- <code class="docutils literal notranslate"><span class="pre">program_str</span></code> or <code class="docutils literal notranslate"><span class="pre">shield_program</span></code> path
+- sensor model/wrapper handle</p></li>
+<li><p>If PLTD is used, set:
+- <code class="docutils literal notranslate"><span class="pre">alpha</span></code>
+- <code class="docutils literal notranslate"><span class="pre">pltd_mode</span></code> (<code class="docutils literal notranslate"><span class="pre">off_policy</span></code> or <code class="docutils literal notranslate"><span class="pre">on_policy</span></code>)
+- differentiable path flag.</p></li>
+</ul>
+</section>
+<section id="logging-and-instrumentation">
+<h2>6. Logging and Instrumentation<a class="headerlink" href="#logging-and-instrumentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Per-episode reward is logged.</p></li>
+<li><p>Per-episode safety/failure/cost signal is logged.</p></li>
+<li><p>Timestep is logged.</p></li>
+<li><p>Progress bar and seed are visible in run output.</p></li>
+</ul>
+</section>
+<section id="baselines-and-comparisons">
+<h2>7. Baselines and Comparisons<a class="headerlink" href="#baselines-and-comparisons" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Run unshielded baseline.</p></li>
+<li><p>Run shielded oracle/rule-based condition.</p></li>
+<li><p>If learned sensor is used, run pretrained-sensor shielded condition.</p></li>
+</ul>
+</section>
+<section id="plots-and-artifacts">
+<h2>8. Plots and Artifacts<a class="headerlink" href="#plots-and-artifacts" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Reward curve is plotted (moving average recommended).</p></li>
+<li><p>Safety curve is plotted (moving unsafe/failure/cost rate).</p></li>
+<li><p>Figures and tabular metrics are saved.</p></li>
+</ul>
+</section>
+<section id="reproducibility">
+<h2>9. Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Random seeds fixed (env, numpy, torch, algorithm).</p></li>
+<li><p>Hyperparameters recorded.</p></li>
+<li><p>Shield and sensor definitions versioned.</p></li>
+</ul>
+</section>
+<section id="preflight-sanity-checks">
+<h2>10. Preflight Sanity Checks<a class="headerlink" href="#preflight-sanity-checks" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Sensor outputs verified on known states.</p></li>
+<li><p>Shield behavior checked on known unsafe actions.</p></li>
+<li><p>Short smoke run completes before long training.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial_frozenlake_registry_config.html" class="btn btn-neutral float-left" title="Tutorial 3: FrozenLake with Registry + Config Workflow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablation_cookbook.html" class="btn btn-neutral float-right" title="Ablation Cookbook" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CleanPLS Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,7 +1,6 @@
 *.log
 *.pkl
 model*
-*.html
 *.p
 *.pyc
 event*

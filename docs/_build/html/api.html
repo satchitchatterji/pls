@@ -1,0 +1,785 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; CleanPLS 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Ablation Cookbook" href="ablation_cookbook.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CleanPLS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_oracle.html">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_mlp.html">Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_registry_config.html">Tutorial 3: FrozenLake with Registry + Config Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minimal_experiment_checklist.html">Minimal Experiment Checklist (Generic Gymnasium Env)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablation_cookbook.html">Ablation Cookbook</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pls.algorithms.ppo_shielded">Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded"><code class="docutils literal notranslate"><span class="pre">ActorCriticPolicy_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded.evaluate_actions"><code class="docutils literal notranslate"><span class="pre">ActorCriticPolicy_shielded.evaluate_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded.forward"><code class="docutils literal notranslate"><span class="pre">ActorCriticPolicy_shielded.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.ppo_shielded.PPO_shielded"><code class="docutils literal notranslate"><span class="pre">PPO_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.ppo_shielded.PPO_shielded.train"><code class="docutils literal notranslate"><span class="pre">PPO_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.a2c_shielded.A2C_shielded"><code class="docutils literal notranslate"><span class="pre">A2C_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.a2c_shielded.A2C_shielded.train"><code class="docutils literal notranslate"><span class="pre">A2C_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.dqn.DQN_standard"><code class="docutils literal notranslate"><span class="pre">DQN_standard</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.dqn_shielded.DQN_shielded"><code class="docutils literal notranslate"><span class="pre">DQN_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.dqn_shielded.DQN_shielded.predict"><code class="docutils literal notranslate"><span class="pre">DQN_shielded.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.dqn_shielded.DQN_shielded.train"><code class="docutils literal notranslate"><span class="pre">DQN_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.double_dqn_shielded.DoubleDQN_shielded"><code class="docutils literal notranslate"><span class="pre">DoubleDQN_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.double_dqn_shielded.DoubleDQN_shielded.train"><code class="docutils literal notranslate"><span class="pre">DoubleDQN_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.rainbow_shielded.Rainbow_shielded"><code class="docutils literal notranslate"><span class="pre">Rainbow_shielded</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.sac_shielded.SAC_shielded"><code class="docutils literal notranslate"><span class="pre">SAC_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.sac_shielded.SAC_shielded.predict"><code class="docutils literal notranslate"><span class="pre">SAC_shielded.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.sac_shielded.SAC_shielded.train"><code class="docutils literal notranslate"><span class="pre">SAC_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.td3_shielded.TD3_shielded"><code class="docutils literal notranslate"><span class="pre">TD3_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.td3_shielded.TD3_shielded.predict"><code class="docutils literal notranslate"><span class="pre">TD3_shielded.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.td3_shielded.TD3_shielded.train"><code class="docutils literal notranslate"><span class="pre">TD3_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.ddpg_shielded.DDPG_shielded"><code class="docutils literal notranslate"><span class="pre">DDPG_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.ddpg_shielded.DDPG_shielded.predict"><code class="docutils literal notranslate"><span class="pre">DDPG_shielded.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.ddpg_shielded.DDPG_shielded.train"><code class="docutils literal notranslate"><span class="pre">DDPG_shielded.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.algorithms.trpo_shielded.TRPO_shielded"><code class="docutils literal notranslate"><span class="pre">TRPO_shielded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.trpo_shielded.TRPO_shielded.predict"><code class="docutils literal notranslate"><span class="pre">TRPO_shielded.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.algorithms.trpo_shielded.TRPO_shielded.train"><code class="docutils literal notranslate"><span class="pre">TRPO_shielded.train()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pls.envs.line_world">Environments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pls.envs.line_world.LineWorldSafetyEnv"><code class="docutils literal notranslate"><span class="pre">LineWorldSafetyEnv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.envs.line_world.LineWorldSafetyEnv.metadata"><code class="docutils literal notranslate"><span class="pre">LineWorldSafetyEnv.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.envs.line_world.LineWorldSafetyEnv.reset"><code class="docutils literal notranslate"><span class="pre">LineWorldSafetyEnv.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.envs.line_world.LineWorldSafetyEnv.step"><code class="docutils literal notranslate"><span class="pre">LineWorldSafetyEnv.step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pls.sensors.base">Sensors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pls.sensors.base.SensorModel"><code class="docutils literal notranslate"><span class="pre">SensorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.sensors.base.SensorModel.predict"><code class="docutils literal notranslate"><span class="pre">SensorModel.predict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.sensors.rule_based.RuleBasedSensorModel"><code class="docutils literal notranslate"><span class="pre">RuleBasedSensorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.sensors.rule_based.RuleBasedSensorModel.predict"><code class="docutils literal notranslate"><span class="pre">RuleBasedSensorModel.predict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.sensors.rule_based.build_rule_based_lineworld_sensor"><code class="docutils literal notranslate"><span class="pre">build_rule_based_lineworld_sensor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pls.shields.shields">Shields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pls.shields.shields.Shield"><code class="docutils literal notranslate"><span class="pre">Shield</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.num_sensors"><code class="docutils literal notranslate"><span class="pre">Shield.num_sensors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.num_actions"><code class="docutils literal notranslate"><span class="pre">Shield.num_actions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.config_folder"><code class="docutils literal notranslate"><span class="pre">Shield.config_folder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.observation_type"><code class="docutils literal notranslate"><span class="pre">Shield.observation_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.noisy_observations"><code class="docutils literal notranslate"><span class="pre">Shield.noisy_observations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.shield_layer"><code class="docutils literal notranslate"><span class="pre">Shield.shield_layer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.observation_model"><code class="docutils literal notranslate"><span class="pre">Shield.observation_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.get_sensor_value_ground_truth"><code class="docutils literal notranslate"><span class="pre">Shield.get_sensor_value_ground_truth</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.get_action_safeties"><code class="docutils literal notranslate"><span class="pre">Shield.get_action_safeties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.get_layer"><code class="docutils literal notranslate"><span class="pre">Shield.get_layer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.get_policy_safety"><code class="docutils literal notranslate"><span class="pre">Shield.get_policy_safety()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.get_sensor_values"><code class="docutils literal notranslate"><span class="pre">Shield.get_sensor_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.get_shielded_policy"><code class="docutils literal notranslate"><span class="pre">Shield.get_shielded_policy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pls.shields.shields.Shield.update_shield"><code class="docutils literal notranslate"><span class="pre">Shield.update_shield()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pls.workflows.execute_workflow">Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pls.workflows.execute_workflow.evaluate"><code class="docutils literal notranslate"><span class="pre">evaluate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.workflows.execute_workflow.pretrain_observation"><code class="docutils literal notranslate"><span class="pre">pretrain_observation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.workflows.execute_workflow.test"><code class="docutils literal notranslate"><span class="pre">test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pls.workflows.execute_workflow.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CleanPLS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<section id="module-pls.algorithms.ppo_shielded">
+<span id="algorithms"></span><h2>Algorithms<a class="headerlink" href="#module-pls.algorithms.ppo_shielded" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.ppo_shielded.</span></span><span class="sig-name descname"><span class="pre">ActorCriticPolicy_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_schedule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/ppo_shielded.html#ActorCriticPolicy_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ActorCriticPolicy</span></code></p>
+<p>Policy class for PPO.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded.evaluate_actions">
+<span class="sig-name descname"><span class="pre">evaluate_actions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pls/algorithms/ppo_shielded.html#ActorCriticPolicy_shielded.evaluate_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded.evaluate_actions" title="Link to this definition"></a></dt>
+<dd><p>Evaluate actions according to the current policy,
+given the observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – visual input</p></li>
+<li><p><strong>actions</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>estimated value, log likelihood of taking those actions
+and entropy of the action distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/ppo_shielded.html#ActorCriticPolicy_shielded.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass in all the networks (actor and critic)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – tensor representing the states to produce policy distribution</p></li>
+<li><p><strong>deterministic</strong> – Whether to sample or use deterministic actions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>action, value and log probability of the action</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pls.algorithms.ppo_shielded.PPO_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.ppo_shielded.</span></span><span class="sig-name descname"><span class="pre">PPO_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/ppo_shielded.html#PPO_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ppo_shielded.PPO_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PPO</span></code></p>
+<p>PPO class with a shield. It behaves as standard PPO if alpha=0 and if shield_params={}</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.ppo_shielded.PPO_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/ppo_shielded.html#PPO_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ppo_shielded.PPO_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Update policy using the currently gathered rollout buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.a2c_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.a2c_shielded.A2C_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.a2c_shielded.</span></span><span class="sig-name descname"><span class="pre">A2C_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'pls.algorithms.ppo_shielded.ActorCriticPolicy_shielded'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/a2c_shielded.html#A2C_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.a2c_shielded.A2C_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">A2C</span></code></p>
+<p>A2C with optional shielded policy safety loss.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.a2c_shielded.A2C_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/a2c_shielded.html#A2C_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.a2c_shielded.A2C_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Update policy using the currently gathered
+rollout buffer (one gradient step over whole data).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.dqn">
+<dt class="sig sig-object py" id="pls.algorithms.dqn.DQN_standard">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.dqn.</span></span><span class="sig-name descname"><span class="pre">DQN_standard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">DQNPolicy</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">VecEnv</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_starts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_buffer_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">ReplayBuffer</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_buffer_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_memory_usage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploration_fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploration_initial_eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploration_final_eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_grad_norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensorboard_log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_init_setup_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/dqn.html#DQN_standard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.dqn.DQN_standard" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DQN</span></code></p>
+<p>Vanilla SB3 DQN baseline used as the editable starting point.</p>
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.dqn_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.dqn_shielded.DQN_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.dqn_shielded.</span></span><span class="sig-name descname"><span class="pre">DQN_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiable_exploration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pltd_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'off_policy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploration_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'epsilon_greedy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">softmax_temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/dqn_shielded.html#DQN_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.dqn_shielded.DQN_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DQN</span></code></p>
+<p>DQN with optional shielding and PLTD safety regularization.</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">differentiable_exploration=False</span></code>: applies shielding at action
+selection only (no safety term in TD loss).</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">differentiable_exploration=True</span></code> and <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>: augments TD
+loss with PLTD safety penalty <code class="docutils literal notranslate"><span class="pre">-alpha</span> <span class="pre">*</span> <span class="pre">log</span> <span class="pre">P_safe</span></code>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.dqn_shielded.DQN_shielded.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pls/algorithms/dqn_shielded.html#DQN_shielded.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.dqn_shielded.DQN_shielded.predict" title="Link to this definition"></a></dt>
+<dd><p>Overrides the base_class predict function to include epsilon-greedy exploration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observation</strong> – the input observation</p></li>
+<li><p><strong>state</strong> – The last states (can be None, used in recurrent policies)</p></li>
+<li><p><strong>episode_start</strong> – The last masks (can be None, used in recurrent policies)</p></li>
+<li><p><strong>deterministic</strong> – Whether or not to return deterministic actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the model’s action and the next state
+(used in recurrent policies)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.dqn_shielded.DQN_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/dqn_shielded.html#DQN_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.dqn_shielded.DQN_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Sample the replay buffer and do the updates
+(gradient descent and update target networks)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.double_dqn_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.double_dqn_shielded.DoubleDQN_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.double_dqn_shielded.</span></span><span class="sig-name descname"><span class="pre">DoubleDQN_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiable_exploration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pltd_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'off_policy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploration_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'epsilon_greedy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">softmax_temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/double_dqn_shielded.html#DoubleDQN_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.double_dqn_shielded.DoubleDQN_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pls.algorithms.dqn_shielded.DQN_shielded" title="pls.algorithms.dqn_shielded.DQN_shielded"><code class="xref py py-class docutils literal notranslate"><span class="pre">DQN_shielded</span></code></a></p>
+<p>Double-DQN variant of <code class="xref py py-class docutils literal notranslate"><span class="pre">DQN_shielded</span></code> with PLTD safety option.</p>
+<p>Uses online network for action selection and target network for evaluation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.double_dqn_shielded.DoubleDQN_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/double_dqn_shielded.html#DoubleDQN_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.double_dqn_shielded.DoubleDQN_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Sample the replay buffer and do the updates
+(gradient descent and update target networks)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.rainbow_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.rainbow_shielded.Rainbow_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.rainbow_shielded.</span></span><span class="sig-name descname"><span class="pre">Rainbow_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/rainbow_shielded.html#Rainbow_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.rainbow_shielded.Rainbow_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pls.algorithms.double_dqn_shielded.DoubleDQN_shielded" title="pls.algorithms.double_dqn_shielded.DoubleDQN_shielded"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoubleDQN_shielded</span></code></a></p>
+<p>Rainbow-lite shielded DQN.</p>
+<p>This implementation keeps the same API shape as other shielded algorithms
+and currently builds on Double-DQN style targets plus optional PLTD safety.</p>
+<p>Full Rainbow components (prioritized replay, noisy nets, categorical
+distributional loss, etc.) are intentionally left out in this lightweight
+baseline.</p>
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.sac_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.sac_shielded.SAC_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.sac_shielded.</span></span><span class="sig-name descname"><span class="pre">SAC_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/sac_shielded.html#SAC_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.sac_shielded.SAC_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SAC</span></code></p>
+<p>SAC wrapper with CleanPLS shield-compatible API.</p>
+<p>For environments/policies exposing discrete action distributions, predict-time
+shielding can be applied. Otherwise, this behaves as base SAC.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.sac_shielded.SAC_shielded.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/sac_shielded.html#SAC_shielded.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.sac_shielded.SAC_shielded.predict" title="Link to this definition"></a></dt>
+<dd><p>Get the policy action from an observation (and optional hidden state).
+Includes sugar-coating to handle different observations (e.g. normalizing images).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observation</strong> – the input observation</p></li>
+<li><p><strong>state</strong> – The last hidden states (can be None, used in recurrent policies)</p></li>
+<li><p><strong>episode_start</strong> – The last masks (can be None, used in recurrent policies)
+this correspond to beginning of episodes,
+where the hidden states of the RNN must be reset.</p></li>
+<li><p><strong>deterministic</strong> – Whether or not to return deterministic actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the model’s action and the next hidden state
+(used in recurrent policies)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.sac_shielded.SAC_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/sac_shielded.html#SAC_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.sac_shielded.SAC_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Sample the replay buffer and do the updates
+(gradient descent and update target networks)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.td3_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.td3_shielded.TD3_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.td3_shielded.</span></span><span class="sig-name descname"><span class="pre">TD3_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/td3_shielded.html#TD3_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.td3_shielded.TD3_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TD3</span></code></p>
+<p>TD3 wrapper with CleanPLS shield-compatible API.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.td3_shielded.TD3_shielded.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/td3_shielded.html#TD3_shielded.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.td3_shielded.TD3_shielded.predict" title="Link to this definition"></a></dt>
+<dd><p>Get the policy action from an observation (and optional hidden state).
+Includes sugar-coating to handle different observations (e.g. normalizing images).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observation</strong> – the input observation</p></li>
+<li><p><strong>state</strong> – The last hidden states (can be None, used in recurrent policies)</p></li>
+<li><p><strong>episode_start</strong> – The last masks (can be None, used in recurrent policies)
+this correspond to beginning of episodes,
+where the hidden states of the RNN must be reset.</p></li>
+<li><p><strong>deterministic</strong> – Whether or not to return deterministic actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the model’s action and the next hidden state
+(used in recurrent policies)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.td3_shielded.TD3_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/td3_shielded.html#TD3_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.td3_shielded.TD3_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Sample the replay buffer and do the updates
+(gradient descent and update target networks)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.ddpg_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.ddpg_shielded.DDPG_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.ddpg_shielded.</span></span><span class="sig-name descname"><span class="pre">DDPG_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/ddpg_shielded.html#DDPG_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ddpg_shielded.DDPG_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DDPG</span></code></p>
+<p>DDPG wrapper with CleanPLS shield-compatible API.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.ddpg_shielded.DDPG_shielded.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/ddpg_shielded.html#DDPG_shielded.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ddpg_shielded.DDPG_shielded.predict" title="Link to this definition"></a></dt>
+<dd><p>Get the policy action from an observation (and optional hidden state).
+Includes sugar-coating to handle different observations (e.g. normalizing images).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observation</strong> – the input observation</p></li>
+<li><p><strong>state</strong> – The last hidden states (can be None, used in recurrent policies)</p></li>
+<li><p><strong>episode_start</strong> – The last masks (can be None, used in recurrent policies)
+this correspond to beginning of episodes,
+where the hidden states of the RNN must be reset.</p></li>
+<li><p><strong>deterministic</strong> – Whether or not to return deterministic actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the model’s action and the next hidden state
+(used in recurrent policies)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.ddpg_shielded.DDPG_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/ddpg_shielded.html#DDPG_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.ddpg_shielded.DDPG_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>Sample the replay buffer and do the updates
+(gradient descent and update target networks)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.algorithms.trpo_shielded">
+<dt class="sig sig-object py" id="pls.algorithms.trpo_shielded.TRPO_shielded">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.algorithms.trpo_shielded.</span></span><span class="sig-name descname"><span class="pre">TRPO_shielded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_safety_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/trpo_shielded.html#TRPO_shielded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.trpo_shielded.TRPO_shielded" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TRPO</span></code></p>
+<p>TRPO wrapper with CleanPLS shield-compatible API.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.trpo_shielded.TRPO_shielded.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/algorithms/trpo_shielded.html#TRPO_shielded.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.trpo_shielded.TRPO_shielded.predict" title="Link to this definition"></a></dt>
+<dd><p>Get the policy action from an observation (and optional hidden state).
+Includes sugar-coating to handle different observations (e.g. normalizing images).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observation</strong> – the input observation</p></li>
+<li><p><strong>state</strong> – The last hidden states (can be None, used in recurrent policies)</p></li>
+<li><p><strong>episode_start</strong> – The last masks (can be None, used in recurrent policies)
+this correspond to beginning of episodes,
+where the hidden states of the RNN must be reset.</p></li>
+<li><p><strong>deterministic</strong> – Whether or not to return deterministic actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the model’s action and the next hidden state
+(used in recurrent policies)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.algorithms.trpo_shielded.TRPO_shielded.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pls/algorithms/trpo_shielded.html#TRPO_shielded.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.algorithms.trpo_shielded.TRPO_shielded.train" title="Link to this definition"></a></dt>
+<dd><p>TRPO training with safety-augmented actor objective.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pls.envs.line_world">
+<span id="environments"></span><h2>Environments<a class="headerlink" href="#module-pls.envs.line_world" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pls.envs.line_world.LineWorldSafetyEnv">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.envs.line_world.</span></span><span class="sig-name descname"><span class="pre">LineWorldSafetyEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/envs/line_world.html#LineWorldSafetyEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.envs.line_world.LineWorldSafetyEnv" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code></p>
+<p>Small 1D safety environment for shield debugging.</p>
+<p>The agent moves on a 1D line with terminal unsafe states at both edges.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.envs.line_world.LineWorldSafetyEnv.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'render_modes':</span> <span class="pre">[]}</span></span><a class="headerlink" href="#pls.envs.line_world.LineWorldSafetyEnv.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.envs.line_world.LineWorldSafetyEnv.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/envs/line_world.html#LineWorldSafetyEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.envs.line_world.LineWorldSafetyEnv.reset" title="Link to this definition"></a></dt>
+<dd><p>Reset to the center position and return observation + info.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.envs.line_world.LineWorldSafetyEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pls/envs/line_world.html#LineWorldSafetyEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.envs.line_world.LineWorldSafetyEnv.step" title="Link to this definition"></a></dt>
+<dd><p>Apply action and return Gymnasium step tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>observation, reward, terminated, truncated, info</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pls.sensors.base">
+<span id="sensors"></span><h2>Sensors<a class="headerlink" href="#module-pls.sensors.base" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pls.sensors.base.SensorModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.sensors.base.</span></span><span class="sig-name descname"><span class="pre">SensorModel</span></span><a class="reference internal" href="_modules/pls/sensors/base.html#SensorModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.sensors.base.SensorModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract sensor model producing probabilistic sensor values.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.sensors.base.SensorModel.predict">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pls/sensors/base.html#SensorModel.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.sensors.base.SensorModel.predict" title="Link to this definition"></a></dt>
+<dd><p>Return batched sensor values in [0, 1] with shape [batch, num_sensors].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-pls.sensors.rule_based">
+<dt class="sig sig-object py" id="pls.sensors.rule_based.RuleBasedSensorModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.sensors.rule_based.</span></span><span class="sig-name descname"><span class="pre">RuleBasedSensorModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/sensors/rule_based.html#RuleBasedSensorModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.sensors.rule_based.RuleBasedSensorModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pls.sensors.base.SensorModel" title="pls.sensors.base.SensorModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorModel</span></code></a></p>
+<p>Deterministic sensor model that maps normalized line position to sensors.</p>
+<p>Sensor order:
+0: near_left_edge
+1: near_right_edge
+2: at_center</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.sensors.rule_based.RuleBasedSensorModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pls/sensors/rule_based.html#RuleBasedSensorModel.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.sensors.rule_based.RuleBasedSensorModel.predict" title="Link to this definition"></a></dt>
+<dd><p>Return batched sensor values in [0, 1] with shape [batch, num_sensors].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pls.sensors.rule_based.build_rule_based_lineworld_sensor">
+<span class="sig-prename descclassname"><span class="pre">pls.sensors.rule_based.</span></span><span class="sig-name descname"><span class="pre">build_rule_based_lineworld_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pls.sensors.rule_based.RuleBasedSensorModel" title="pls.sensors.rule_based.RuleBasedSensorModel"><span class="pre">RuleBasedSensorModel</span></a></span></span><a class="reference internal" href="_modules/pls/sensors/rule_based.html#build_rule_based_lineworld_sensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.sensors.rule_based.build_rule_based_lineworld_sensor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pls.shields.shields">
+<span id="shields"></span><h2>Shields<a class="headerlink" href="#module-pls.shields.shields" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pls.shields.shields.</span></span><span class="sig-name descname"><span class="pre">Shield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">program_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_sensor_value_ground_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_input_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sensors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_actions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shield_program</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noisy_observations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_net</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_net_cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Shield structure for RL algorithms. It takes a policy and a set of observations to produce a safer policy
+using background knowledge. The structure is a compiled problog program. It is intended to be used on top of a policy network.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.num_sensors">
+<span class="sig-name descname"><span class="pre">num_sensors</span></span><a class="headerlink" href="#pls.shields.shields.Shield.num_sensors" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of sensors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.num_actions">
+<span class="sig-name descname"><span class="pre">num_actions</span></span><a class="headerlink" href="#pls.shields.shields.Shield.num_actions" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of available discrete actions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.config_folder">
+<span class="sig-name descname"><span class="pre">config_folder</span></span><a class="headerlink" href="#pls.shields.shields.Shield.config_folder" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>location of the config file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.observation_type">
+<span class="sig-name descname"><span class="pre">observation_type</span></span><a class="headerlink" href="#pls.shields.shields.Shield.observation_type" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Observation type (“ground truth” or “pretrained”)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.noisy_observations">
+<span class="sig-name descname"><span class="pre">noisy_observations</span></span><a class="headerlink" href="#pls.shields.shields.Shield.noisy_observations" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Boolean indicating whether noisy observations are used</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.shield_layer">
+<span class="sig-name descname"><span class="pre">shield_layer</span></span><a class="headerlink" href="#pls.shields.shields.Shield.shield_layer" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>deep problog layer as the shield</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.observation_model">
+<span class="sig-name descname"><span class="pre">observation_model</span></span><a class="headerlink" href="#pls.shields.shields.Shield.observation_model" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>observation net object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.get_sensor_value_ground_truth">
+<span class="sig-name descname"><span class="pre">get_sensor_value_ground_truth</span></span><a class="headerlink" href="#pls.shields.shields.Shield.get_sensor_value_ground_truth" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function used to compute ground truth observations from image input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.get_action_safeties">
+<span class="sig-name descname"><span class="pre">get_action_safeties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_values</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield.get_action_safeties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield.get_action_safeties" title="Link to this definition"></a></dt>
+<dd><p>Compute how safe it is to execute an action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sensor_values</strong> – tensor of sensor values (observed or ground truth)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tensor of probabilities representing safety of actions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.get_layer">
+<span class="sig-name descname"><span class="pre">get_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">program</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_struct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_struct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield.get_layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield.get_layer" title="Link to this definition"></a></dt>
+<dd><p>Initialize a problog layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>program</strong> – problog program</p></li>
+<li><p><strong>queries</strong> – problog queries</p></li>
+<li><p><strong>evidences</strong> – problog evidence</p></li>
+<li><p><strong>input_struct</strong> – dict containing input values to the problog program</p></li>
+<li><p><strong>query_struct</strong> – dict containing output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a problog layer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.get_policy_safety">
+<span class="sig-name descname"><span class="pre">get_policy_safety</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_actions</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield.get_policy_safety"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield.get_policy_safety" title="Link to this definition"></a></dt>
+<dd><p>Compute how safe it is to follow the given policy given sensor values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensor_values</strong> – tensor of sensor values (observed or ground truth)</p></li>
+<li><p><strong>base_actions</strong> – tensor of the action probability distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>probability representing safety</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.get_sensor_values">
+<span class="sig-name descname"><span class="pre">get_sensor_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield.get_sensor_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield.get_sensor_values" title="Link to this definition"></a></dt>
+<dd><p>Returns ground truth sensor values or ones from the observation network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – tensor representing the states to extract features from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tensor of sensor values in [0, 1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.get_shielded_policy">
+<span class="sig-name descname"><span class="pre">get_shielded_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_actions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_values</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield.get_shielded_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield.get_shielded_policy" title="Link to this definition"></a></dt>
+<dd><p>Compute the shielded policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_actions</strong> – tensor of the action probability distribution</p></li>
+<li><p><strong>sensor_values</strong> – tensor of sensor values (observed or ground truth)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tensor representing the shielded policy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pls.shields.shields.Shield.update_shield">
+<span class="sig-name descname"><span class="pre">update_shield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_program_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/shields/shields.html#Shield.update_shield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.shields.shields.Shield.update_shield" title="Link to this definition"></a></dt>
+<dd><p>Update the shield with a new problog program.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_program_str</strong> – new problog program string</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pls.workflows.execute_workflow">
+<span id="workflows"></span><h2>Workflows<a class="headerlink" href="#module-pls.workflows.execute_workflow" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pls.workflows.execute_workflow.evaluate">
+<span class="sig-prename descclassname"><span class="pre">pls.workflows.execute_workflow.</span></span><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_at_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_test_episodes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/workflows/execute_workflow.html#evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.workflows.execute_workflow.evaluate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pls.workflows.execute_workflow.pretrain_observation">
+<span class="sig-prename descclassname"><span class="pre">pls.workflows.execute_workflow.</span></span><span class="sig-name descname"><span class="pre">pretrain_observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_net_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_training_examples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretrain_w_extra_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_test_examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/workflows/execute_workflow.html#pretrain_observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.workflows.execute_workflow.pretrain_observation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pls.workflows.execute_workflow.test">
+<span class="sig-prename descclassname"><span class="pre">pls.workflows.execute_workflow.</span></span><span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/workflows/execute_workflow.html#test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.workflows.execute_workflow.test" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pls.workflows.execute_workflow.train">
+<span class="sig-prename descclassname"><span class="pre">pls.workflows.execute_workflow.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pls/workflows/execute_workflow.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pls.workflows.execute_workflow.train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablation_cookbook.html" class="btn btn-neutral float-left" title="Ablation Cookbook" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CleanPLS Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

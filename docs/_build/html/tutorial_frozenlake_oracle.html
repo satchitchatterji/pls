@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 1: FrozenLake Oracle (No Registry, No Config) &mdash; CleanPLS 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)" href="tutorial_frozenlake_mlp.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CleanPLS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#goal">Goal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run">Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-it-does">What it does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-use-this-tutorial">Why use this tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#related-notebook">Related notebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_mlp.html">Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_frozenlake_registry_config.html">Tutorial 3: FrozenLake with Registry + Config Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minimal_experiment_checklist.html">Minimal Experiment Checklist (Generic Gymnasium Env)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablation_cookbook.html">Ablation Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CleanPLS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorial 1: FrozenLake Oracle (No Registry, No Config)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial_frozenlake_oracle.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial-1-frozenlake-oracle-no-registry-no-config">
+<h1>Tutorial 1: FrozenLake Oracle (No Registry, No Config)<a class="headerlink" href="#tutorial-1-frozenlake-oracle-no-registry-no-config" title="Link to this heading"></a></h1>
+<p>This tutorial uses the fully self-contained script:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/frozenlake/frozenlake_oracle.py</span></code></p></li>
+</ul>
+<section id="goal">
+<h2>Goal<a class="headerlink" href="#goal" title="Link to this heading"></a></h2>
+<p>Run a complete shielded PPO (SPPO) experiment on <code class="docutils literal notranslate"><span class="pre">FrozenLake-v1</span></code> without:</p>
+<ul class="simple">
+<li><p>registry registration code,</p></li>
+<li><p>JSON config files.</p></li>
+</ul>
+<p>Everything lives in one file:</p>
+<ul class="simple">
+<li><p>environment creation,</p></li>
+<li><p>sensor wrapper,</p></li>
+<li><p>ProbLog shield program (as a Python string),</p></li>
+<li><p>SPPO training,</p></li>
+<li><p>plotting and image export.</p></li>
+</ul>
+</section>
+<section id="run">
+<h2>Run<a class="headerlink" href="#run" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/frozenlake/frozenlake_oracle.py
+</pre></div>
+</div>
+</section>
+<section id="what-it-does">
+<h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Creates <code class="docutils literal notranslate"><span class="pre">FrozenLake-v1</span></code> (4x4, slippery).</p></li>
+<li><p>Uses an oracle sensor that outputs action-to-hole risk signals:
+- <code class="docutils literal notranslate"><span class="pre">left_to_hole</span></code>, <code class="docutils literal notranslate"><span class="pre">down_to_hole</span></code>, <code class="docutils literal notranslate"><span class="pre">right_to_hole</span></code>, <code class="docutils literal notranslate"><span class="pre">up_to_hole</span></code>.</p></li>
+<li><p>Defines a shield from an in-file ProbLog string.</p></li>
+<li><p>Trains <code class="docutils literal notranslate"><span class="pre">PPO_shielded</span></code> end-to-end.</p></li>
+<li><p>Plots reward and failure-rate curves.</p></li>
+<li><p>Saves figures to:
+- <code class="docutils literal notranslate"><span class="pre">examples/frozenlake/images/frozenlake_oracle_curves.png</span></code></p></li>
+</ol>
+</section>
+<section id="why-use-this-tutorial">
+<h2>Why use this tutorial<a class="headerlink" href="#why-use-this-tutorial" title="Link to this heading"></a></h2>
+<p>Use this path when you want the fastest possible experiment loop and do not
+need framework-level abstraction yet.</p>
+</section>
+<section id="related-notebook">
+<h2>Related notebook<a class="headerlink" href="#related-notebook" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/frozenlake/frozenlake_compare_oracle_vs_pretrained_mlp.ipynb</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorial_frozenlake_mlp.html" class="btn btn-neutral float-right" title="Tutorial 2: FrozenLake Pretrained MLP Sensor (No Registry, No Config)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CleanPLS Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
