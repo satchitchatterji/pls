@@ -2,7 +2,6 @@
 
 CleanPLS is a stripped-down implementation of probabilistic logic shields for reinforcement learning.
 
-Install from PyPI (package name): `clean-pls`  
 Import in Python: `import pls`
 
 Documentation:
